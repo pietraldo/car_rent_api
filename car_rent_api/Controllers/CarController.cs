@@ -10,7 +10,7 @@ namespace car_rent_api.Controllers
     {
         private static readonly List<Car> cars = new List<Car>
         {
-            new Car { Id = 1, Brand = "Toyota", Name = "Corolla", Color = "White", Year = 2019 },
+            new Car { Id = 1, Brand = "BMW", Name = "Corolla", Color = "White", Year = 2019 },
             new Car { Id = 2, Brand = "Toyota", Name = "Camry", Color = "Black", Year = 2020 },
             new Car { Id = 3, Brand = "Honda", Name = "Civic", Color = "Red", Year = 2018 },
             new Car { Id = 4, Brand = "Honda", Name = "Accord", Color = "Blue", Year = 2017 }
