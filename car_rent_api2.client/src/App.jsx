@@ -61,11 +61,17 @@ function App()
 function Formularz({ onCarAddedOrEdited, editingCar })
 {
     const [formData, setFormData] = useState({
+        id: 0,
         brand: '',
         model: '',
-        year: '',
-        price: '',
-        location: ''
+        year: 0,
+        price: 0,
+        location: {
+            longitude: 0,
+            latitude: 0
+        },
+        isrented: false,
+        photo: ''
     });
 
     useEffect(() =>
@@ -101,6 +107,7 @@ function Formularz({ onCarAddedOrEdited, editingCar })
             }
         } else
         {
+            console.log(JSON.stringify(formData));
             const response = await fetch('api/Car', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
