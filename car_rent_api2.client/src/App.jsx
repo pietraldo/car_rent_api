@@ -78,7 +78,7 @@ function Formularz({ onCarAddedOrEdited, editingCar })
     {
         if (editingCar)
         {
-            setFormData(editingCar); // Populate form with editing car data
+            setFormData(editingCar); 
         }
     }, [editingCar]);
 
