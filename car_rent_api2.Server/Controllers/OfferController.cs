@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -25,12 +26,10 @@ namespace car_rent_api2.Server.Controllers
             offers.Add("Offer 1");
             offers.Add("Offer 2");
             string a = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-            if(a!=null)
-            {
-                offers.Add(a.Substring(0, 10));
-            }
+            foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
+                offers.Add((string)de.Key);
 
-            
+
             return offers;
         }
 
