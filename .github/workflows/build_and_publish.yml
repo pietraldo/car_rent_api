@@ -22,6 +22,11 @@ jobs:
       - name: Print all environment variables
         run: printenv
       
+      - name: Check Connection String environment variable
+        run: echo $ConnectionStrings__DefaultConnection
+      
+      
+      
       # Set up .NET Core SDK
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
