@@ -9,6 +9,6 @@
         public string Photo { get; set; }
         public bool IsRented { get; set; }
         public double Price { get; set; }
-        public Location location { get; set; }
+        public Location? location { get; set; }
     }
 }

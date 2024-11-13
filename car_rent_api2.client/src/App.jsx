@@ -4,6 +4,8 @@ import './App.css';
 function App()
 {
     const [data, setData] = useState([]);
+    const [search, setSearch] = useState(''); 
+    const [carsToDisplay, setCarsToDisplay] = useState([]);
     const [editingCar, setEditingCar] = useState(null); 
 
     const fetchCarList = async () =>
@@ -14,6 +16,7 @@ function App()
             const jsonData = await response.json();
             setData(jsonData);
         }
+        filterCars();
     };
 
     useEffect(() =>
@@ -21,18 +24,59 @@ function App()
         fetchCarList();
     }, []);
 
+    useEffect(() =>
+    {
+        filterCars();
+    }, [data, search]);
+
 
     const handleEdit = (car) =>
     {
         setEditingCar(car); 
     };
 
+    const handleDelete = async (car) =>
+    {
+        const response = await fetch(`api/Car/${car.id}`, {
+            method: 'DELETE',
+        });
+        handleCarAddedOrEdited();
+    }
+
 
     const handleCarAddedOrEdited = () =>
     {
         fetchCarList(); 
         setEditingCar(null); 
+        filterCars();
     };
+
+    const filterCars = () =>
+    {
+        
+        if (search === '')
+        {
+            setCarsToDisplay(data);
+            console.log(data);
+        }
+        else
+        {
+            const filteredCars = data.filter(car =>
+                car.brand.toLowerCase().includes(search) ||
+                car.model.toLowerCase().includes(search) ||
+                car.year.toString().includes(search) ||
+                car.price.toString().includes(search)
+            );
+            setCarsToDisplay(filteredCars);
+        }
+    }
+
+    const handleSearchResults = async (e) =>
+    {
+        const search = e.target.value.toLowerCase();
+        setSearch(search);
+        filterCars();
+    }
 
     return (
         <div className="container">
@@ -45,18 +89,21 @@ function App()
             </div>
             <div className="section">
                 <h1>Car List</h1>
-                <input type="text" placeholder="Search..." className="searchInput" />
+                <input type="text" placeholder="Search..." className="searchInput" onChange={handleSearchResults} />
                 <div className="carList">
-                    {data.map((car) => (
-                        <CarItem key={car.id} car={car} onEdit={() => handleEdit(car)} />
+                    {carsToDisplay.map((car) => (
+                        <CarItem
+                            key={car.id}
+                            car={car}
+                            onEdit={() => handleEdit(car)}
+                            onDelete={() => handleDelete(car)}
+                        />
                     ))}
                 </div>
             </div>
         </div>
     );
 }
-
-
 
 function Formularz({ onCarAddedOrEdited, editingCar })
 {
@@ -94,6 +141,7 @@ function Formularz({ onCarAddedOrEdited, editingCar })
 
         if (editingCar)
         {
+            console.log(formData)
             // Update car (PUT request)
             const response = await fetch(`api/Car/${editingCar.id}`, {
                 method: 'PUT',
@@ -135,7 +183,7 @@ function Formularz({ onCarAddedOrEdited, editingCar })
     );
 }
 
-function CarItem({ car, onEdit })
+function CarItem({ car, onEdit, onDelete })
 {
     return (
         <div className="carItem">
@@ -148,7 +196,7 @@ function CarItem({ car, onEdit })
             </div>
             <div className="carActions">
                 <button className="editButton" onClick={onEdit}>Edit</button>
-                <button className="deleteButton">Delete</button>
+                <button className="deleteButton" onClick={onDelete}>Delete</button>
             </div>
         </div>
     );
