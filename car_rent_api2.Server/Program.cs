@@ -11,7 +11,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetValue<string>("ConnectionStrings:DefaultConnection");
+
+var connectionString = Environment.GetEnvironmentVariable("DATABASE_CONNECTION_STRING");
 
 builder.Services.AddDbContext<CarRentDbContext>(options =>
     options.UseSqlServer(connectionString));
