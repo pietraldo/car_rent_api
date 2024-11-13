@@ -1,4 +1,4 @@
-name: Build and deploy ASP.Net Core app with React to Azure Web App - carrentsearchengine
+name: Build and deploy ASP.NET Core app with React to Azure Web App - carrentsearchengine
 
 on:
   push:
@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    env:
-      DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
     steps:
       # Checkout the repository
       - uses: actions/checkout@v4
@@ -21,16 +19,16 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-       # Set the Connection String as an environment variable
-      - name: Set Environment Variable for Connection String
-        run: echo "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
-
       # Build the .NET Core backend
       - name: Build with dotnet
+        env:
+          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
         run: dotnet build --configuration Release
 
       # Publish the .NET Core backend (for deployment)
       - name: dotnet publish
+        env:
+          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       # Upload artifacts for deployment job
@@ -38,8 +36,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-artifacts
-          path: ${{env.DOTNET_ROOT}}/myapp
-
+          path: ${{ env.DOTNET_ROOT }}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -61,18 +58,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_112249FE1B0A4B6EA1CA3253F85D246A }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_419B4D7D0AAF45B883FC5B24046CCEFB }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_02D619031269450C8A777F5D8688EE61 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID }}
       
-          
+      # Deploy to Azure Web App
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'carrentapi3'
           slot-name: 'Production'
-          package: .
-
-
-
+          package: ${{ env.DOTNET_ROOT }}/myapp
