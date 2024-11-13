@@ -13,7 +13,15 @@ jobs:
     steps:
       # Checkout the repository
       - uses: actions/checkout@v4
+      
+      # Set the Connection String as an environment variable
+      - name: Set Environment Variable for Connection String
+        run: echo "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
 
+      # Print all environment variables to check
+      - name: Print all environment variables
+        run: printenv
+      
       # Set up .NET Core SDK
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
