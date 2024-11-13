@@ -20,6 +20,10 @@ jobs:
         with:
           dotnet-version: '8.x'
 
+       # Set the Connection String as an environment variable
+      - name: Set Environment Variable for Connection String
+        run: echo "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}" >> $GITHUB_ENV
+
       # Build the .NET Core backend
       - name: Build with dotnet
         run: dotnet build --configuration Release
@@ -60,12 +64,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_419B4D7D0AAF45B883FC5B24046CCEFB }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_02D619031269450C8A777F5D8688EE61 }}
       
-      # Set the connection string as an environment variable in Azure Web App
-      - name: Set Connection String in Azure Web App
-        run: |
-          echo "Setting connection string in Azure"
-          az webapp config appsettings set --name carrentapi3 --resource-group your_resource_group --settings "ConnectionStrings__DefaultConnection=${{ secrets.DB_CONNECTION_STRING }}"
-      
+          
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
