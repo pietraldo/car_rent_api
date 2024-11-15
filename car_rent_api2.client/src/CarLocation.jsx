@@ -6,6 +6,7 @@ function Location({ carId, location, setLocation })
     const [searchResults, setSearchResults] = useState([]);
     const [searchString, setSearchString] = useState("");
 
+
     const fetchLocation = async () =>
     {
         const response = await fetch(`api/car/location/${carId}`);
