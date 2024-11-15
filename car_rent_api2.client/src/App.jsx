@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import CarDetails from './CarDetailsList';
+import CarService from './CarServiceList';
+import Location from './CarLocation';
 
 function App()
 {
@@ -8,7 +10,7 @@ function App()
     const [search, setSearch] = useState(''); 
     const [carsToDisplay, setCarsToDisplay] = useState([]);
     const [editingCar, setEditingCar] = useState(null); 
-    const [carDetails, setCarDetails] = useState([]);
+
 
     const fetchCarList = async () =>
     {
@@ -61,7 +63,6 @@ function App()
         if (search === '')
         {
             setCarsToDisplay(data);
-            console.log(data);
         }
         else
         {
@@ -89,8 +90,6 @@ function App()
                 <Formularz
                     onCarAddedOrEdited={handleCarAddedOrEdited}
                     editingCar={editingCar}
-                    carDetails={carDetails}
-                    setCarDetails={setCarDetails}
                 />
             </div>
             <div className="section">
@@ -111,8 +110,12 @@ function App()
     );
 }
 
-function Formularz({ onCarAddedOrEdited, editingCar, carDetails, setCarDetails })
+function Formularz({ onCarAddedOrEdited, editingCar})
 {
+    const [carDetails, setCarDetails] = useState([]);
+    const [carService, setCarService] = useState([]);
+    const [carLocation, setCarLocation] = useState({ name: "", longitude: 0, latitude:0, address:"", id:-1 });
+
     const [formData, setFormData] = useState({
         id: 0,
         brand: '',
@@ -146,36 +149,37 @@ function Formularz({ onCarAddedOrEdited, editingCar, carDetails, setCarDetails }
         e.preventDefault();
 
         console.log(carDetails);
+        console.log(carService);
 
-        if (editingCar)
-        {
-            console.log(formData)
-            // Update car (PUT request)
-            const response = await fetch(`api/Car/${editingCar.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+        //if (editingCar)
+        //{
+        //    console.log(formData)
+        //    // Update car (PUT request)
+        //    const response = await fetch(`api/Car/${editingCar.id}`, {
+        //        method: 'PUT',
+        //        headers: { 'Content-Type': 'application/json' },
+        //        body: JSON.stringify(formData),
+        //    });
 
-            if (response.ok)
-            {
-                onCarAddedOrEdited(); 
-            }
-        } else
-        {
-            console.log(JSON.stringify(formData));
-            const response = await fetch('api/Car', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
+        //    if (response.ok)
+        //    {
+        //        onCarAddedOrEdited(); 
+        //    }
+        //} else
+        //{
+        //    console.log(JSON.stringify(formData));
+        //    const response = await fetch('api/Car', {
+        //        method: 'POST',
+        //        headers: { 'Content-Type': 'application/json' },
+        //        body: JSON.stringify(formData),
+        //    });
 
-            if (response.ok)
-            {
-                onCarAddedOrEdited(); 
-                setFormData({ brand: '', model: '', year: '', price: '', location: '' }); 
-            }
-        }
+        //    if (response.ok)
+        //    {
+        //        onCarAddedOrEdited(); 
+        //        setFormData({ brand: '', model: '', year: '', price: '', location: '' }); 
+        //    }
+        //}
     };
 
     return (
@@ -185,8 +189,9 @@ function Formularz({ onCarAddedOrEdited, editingCar, carDetails, setCarDetails }
             <input type="number" name="year" placeholder="Year" value={formData.year} onChange={handleInputChange} />
             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} />
             <input type="file" name="photo" placeholder="Photo" />
-            <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} />
             <CarDetails carId={2} carDetails={carDetails} setCarDetails={setCarDetails} />
+            <CarService carId={2} carService={carService} setCarService={setCarService} />
+            <Location carId={2} location={carLocation} setLocation={setCarLocation} />
             <button onClick={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
         </div>
     );

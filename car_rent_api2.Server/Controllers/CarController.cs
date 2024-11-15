@@ -57,7 +57,7 @@ namespace car_rent_api2.Server.Controllers
             };
 
             var filteredCarDetails = carDetails.Where(x => x.Description.Contains(search));
-            return Ok(filteredCarDetails); 
+            return Ok(filteredCarDetails);
         }
 
         [HttpGet("carservices")]
@@ -70,6 +70,40 @@ namespace car_rent_api2.Server.Controllers
             return carServices;
             //return await _context.CarServices.ToListAsync();
         }
+        [HttpGet("carservices/{id}")]
+        public async Task<ActionResult<CarService>> GetCarServiceById(int id)
+        {
+            List<CarService> carServices = new List<CarService>
+            {
+                new CarService { Id = 1, Name = "service 1", Price = 23, Description = "description1" },
+                new CarService { Id = 2, Name = "service 2", Price = 24, Description = "description2" },
+                new CarService { Id = 3, Name = "service 3", Price = 25, Description = "description3" }
+            };
+
+            //var carService = carServices.FirstOrDefault(x => x.Id == id);
+
+
+
+            return Ok(carServices);
+        }
+
+        [HttpGet("carservices/search/{search}")]
+        public async Task<ActionResult<IEnumerable<CarService>>> SearchCarServices(string search)
+        {
+            List<CarService> carServices = new List<CarService>
+            {
+                new CarService { Id = 1, Name = "service 1", Price = 23, Description = "description1" },
+                new CarService { Id = 2, Name = "service 2", Price = 24, Description = "description2" },
+                new CarService { Id = 3, Name = "service 3", Price = 25, Description = "description3" },
+                new CarService { Id = 4, Name = "special service", Price = 30, Description = "special description" }
+            };
+
+            var filteredServices = carServices.Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                                           x.Description.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+            return Ok(filteredServices);
+        }
+
 
         [HttpGet("locations")]
         public async Task<ActionResult<IEnumerable<Location>>> GetLocations()
@@ -80,6 +114,45 @@ namespace car_rent_api2.Server.Controllers
             locations.Add(new Location { Id = 3, Latitude = 56, Longitude = 23, Address = "Adfa3" });
             return locations;
             //return await _context.Locations.ToListAsync();
+        }
+
+        [HttpGet("location/{id}")]
+        public async Task<ActionResult<Location>> GetLocationByCarId(int id)
+        {
+            // Simulated data
+            var location = new Location
+            {
+                Id = id,
+                Name = "Default Location",
+                Address = "123 Main St",
+                Latitude = 40.7128,
+                Longitude = -74.0060
+            };
+
+            if (location == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(location);
+        }
+
+        [HttpGet("location/search/{search}")]
+        public async Task<ActionResult<IEnumerable<Location>>> SearchLocation(string search)
+        {
+            // Simulated data
+            var locations = new List<Location>
+            {
+                new Location { Id = 1, Name = "Location 1", Address = "123 Main St", Latitude = 40.7128, Longitude = -74.0060 },
+                new Location { Id = 2, Name = "Location 2", Address = "456 Elm St", Latitude = 34.0522, Longitude = -118.2437 },
+                new Location { Id = 3, Name = "Special Location", Address = "789 Oak St", Latitude = 37.7749, Longitude = -122.4194 }
+            };
+
+            var filteredLocations = locations.Where(l =>
+                l.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                l.Address.Contains(search, StringComparison.OrdinalIgnoreCase));
+
+            return Ok(filteredLocations);
         }
 
         // GET: api/Car/5
