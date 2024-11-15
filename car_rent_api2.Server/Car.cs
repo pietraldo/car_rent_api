@@ -10,5 +10,9 @@
         public bool IsRented { get; set; }
         public double Price { get; set; }
         public Location? location { get; set; }
+
+        public List<CarDetail> Details { get; set; }
+
+        public List<CarService> Services { get; set; }
     }
 }
