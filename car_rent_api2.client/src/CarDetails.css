@@ -1,0 +1,7 @@
+﻿.car-detail
+{
+    display:flex;
+}
+button.remove-button {
+    background: red;
+}

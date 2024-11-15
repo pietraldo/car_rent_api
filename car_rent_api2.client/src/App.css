@@ -12,7 +12,6 @@
     flex-direction: row;
     gap: 24px;
     padding: 16px;
-    max-width: 600px;
     margin: auto;
 }
 
@@ -30,24 +29,29 @@
         margin-bottom: 16px;
         color: #333;
     }
+    .section h2 {
+        font-size: 1.5em;
+        margin-bottom: 16px;
+        color: #333;
+    }
 
 /* Form styling */
-form {
+.car-form {
     display: flex;
     flex-direction: column;
     gap: 12px;
 }
 
-    form input[type="text"],
-    form input[type="number"],
-    form input[type="file"] {
+    .car-form input[type="text"],
+    .car-form input[type="number"],
+    .car-form input[type="file"] {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;
         font-size: 1em;
     }
 
-    form button {
+    .car-form button {
         padding: 10px;
         background-color: #4CAF50;
         color: white;
@@ -58,7 +62,7 @@ form {
         font-weight: bold;
     }
 
-        form button:hover {
+        .car-form button:hover {
             background-color: #45a049;
         }
 
@@ -78,6 +82,7 @@ form {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    min-width:400px;
 }
 
 

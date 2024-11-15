@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
+import CarDetails from './CarDetailsList';
 
 function App()
 {
@@ -18,6 +19,8 @@ function App()
         }
         filterCars();
     };
+
+
 
     useEffect(() =>
     {
@@ -171,17 +174,20 @@ function Formularz({ onCarAddedOrEdited, editingCar })
     };
 
     return (
-        <form onSubmit={handleFormSubmit}>
+        <div className="car-form">
             <input type="text" name="brand" placeholder="Brand" value={formData.brand} onChange={handleInputChange} />
             <input type="text" name="model" placeholder="Model" value={formData.model} onChange={handleInputChange} />
             <input type="number" name="year" placeholder="Year" value={formData.year} onChange={handleInputChange} />
             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} />
             <input type="file" name="photo" placeholder="Photo" />
             <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} />
-            <button type="submit">{editingCar ? 'Edit' : 'Add'}</button>
-        </form>
+            <CarDetails carId={2} />
+            <button onSubmit={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
+        </div>
     );
 }
+
+
 
 function CarItem({ car, onEdit, onDelete })
 {
