@@ -8,6 +8,7 @@ function App()
     const [search, setSearch] = useState(''); 
     const [carsToDisplay, setCarsToDisplay] = useState([]);
     const [editingCar, setEditingCar] = useState(null); 
+    const [carDetails, setCarDetails] = useState([]);
 
     const fetchCarList = async () =>
     {
@@ -88,6 +89,8 @@ function App()
                 <Formularz
                     onCarAddedOrEdited={handleCarAddedOrEdited}
                     editingCar={editingCar}
+                    carDetails={carDetails}
+                    setCarDetails={setCarDetails}
                 />
             </div>
             <div className="section">
@@ -108,7 +111,7 @@ function App()
     );
 }
 
-function Formularz({ onCarAddedOrEdited, editingCar })
+function Formularz({ onCarAddedOrEdited, editingCar, carDetails, setCarDetails })
 {
     const [formData, setFormData] = useState({
         id: 0,
@@ -141,6 +144,8 @@ function Formularz({ onCarAddedOrEdited, editingCar })
     const handleFormSubmit = async (e) =>
     {
         e.preventDefault();
+
+        console.log(carDetails);
 
         if (editingCar)
         {
@@ -181,8 +186,8 @@ function Formularz({ onCarAddedOrEdited, editingCar })
             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} />
             <input type="file" name="photo" placeholder="Photo" />
             <input type="text" name="location" placeholder="Location" value={formData.location} onChange={handleInputChange} />
-            <CarDetails carId={2} />
-            <button onSubmit={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
+            <CarDetails carId={2} carDetails={carDetails} setCarDetails={setCarDetails} />
+            <button onClick={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
         </div>
     );
 }

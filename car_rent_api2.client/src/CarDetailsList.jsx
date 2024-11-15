@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import './CarDetails.css';
 
-function CarDetails({ carId })
+function CarDetails({ carId, carDetails, setCarDetails })
 {
-    const [carDetails, setCarDetails] = useState([]);
     const [searchResults, setSearchResults] = useState([]);
     const [searchString, setSearchString] = useState("");
     const [searchIndex, setSearchIndex] = useState(-1);
@@ -25,7 +24,7 @@ function CarDetails({ carId })
 
     const handleAddClick = () =>
     {
-        setCarDetails([...carDetails, { description: "", value: "" }]);
+        setCarDetails([...carDetails, { id:-1, description: "", value: "" }]);
     };
 
     const handleRemoveClick = (index) =>
@@ -38,8 +37,10 @@ function CarDetails({ carId })
     {
         const newCarDetails = [...carDetails];
         newCarDetails[index][field] = value;
+        newCarDetails[index]["id"] = -1; // This is a new car detail, not one that was fetched from the database]
         setCarDetails(newCarDetails);
         setSearchIndex(index);
+
 
         if (field === "description")
         {
@@ -76,6 +77,7 @@ function CarDetails({ carId })
         const newCarDetails = [...carDetails];
         newCarDetails[index].description = suggestion.description;
         newCarDetails[index].value = suggestion.value;
+        newCarDetails[index].id = suggestion.id;
         setCarDetails(newCarDetails);
         setSearchResults([]);
         setSearchString("");
