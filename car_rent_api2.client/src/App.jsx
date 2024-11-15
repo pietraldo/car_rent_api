@@ -148,38 +148,45 @@ function Formularz({ onCarAddedOrEdited, editingCar})
     {
         e.preventDefault();
 
-        console.log(carDetails);
-        console.log(carService);
+        var newCar = {};
+        newCar.brand = formData.brand;
+        newCar.model = formData.model;
+        newCar.year = formData.year;
+        newCar.photo = "";
+        newCar.isrented = false;
+        newCar.price = formData.price;
+        newCar.location = carLocation;
+        newCar.details = carDetails;
+        newCar.services = carService;
+        console.log(JSON.stringify(newCar));
 
-        //if (editingCar)
-        //{
-        //    console.log(formData)
-        //    // Update car (PUT request)
-        //    const response = await fetch(`api/Car/${editingCar.id}`, {
-        //        method: 'PUT',
-        //        headers: { 'Content-Type': 'application/json' },
-        //        body: JSON.stringify(formData),
-        //    });
+        if (editingCar)
+        {
+            // Update car (PUT request)
+            const response = await fetch(`api/Car/${editingCar.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCar),
+            });
 
-        //    if (response.ok)
-        //    {
-        //        onCarAddedOrEdited(); 
-        //    }
-        //} else
-        //{
-        //    console.log(JSON.stringify(formData));
-        //    const response = await fetch('api/Car', {
-        //        method: 'POST',
-        //        headers: { 'Content-Type': 'application/json' },
-        //        body: JSON.stringify(formData),
-        //    });
+            if (response.ok)
+            {
+                onCarAddedOrEdited(); 
+            }
+        } else
+        {
+            const response = await fetch('api/Car', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCar),
+            });
 
-        //    if (response.ok)
-        //    {
-        //        onCarAddedOrEdited(); 
-        //        setFormData({ brand: '', model: '', year: '', price: '', location: '' }); 
-        //    }
-        //}
+            if (response.ok)
+            {
+                onCarAddedOrEdited(); 
+                setFormData({ brand: '', model: '', year: '', price: '', location: '' }); 
+            }
+        }
     };
 
     return (

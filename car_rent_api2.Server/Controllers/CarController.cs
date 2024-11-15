@@ -172,11 +172,76 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Car>> Post([FromBody] Car car)
         {
+            // Handle CarDetails - Add new details if their Id is -1 (new)
+            for (int i = 0; i < car.Details.Count; i++)
+            {
+                var detail = car.Details[i];
+                if (detail.Id == -1)
+                {
+                    detail.Id = 0; // Reset Id to 0 (EF Core will generate a new Id)
+                    _context.CarDetails.Add(detail); // Add new CarDetail
+                }
+                else
+                {
+                    // Optionally, check if the CarDetail already exists and attach it
+                    var existingDetail = await _context.CarDetails.FindAsync(detail.Id);
+                    if (existingDetail != null)
+                    {
+                        _context.Entry(existingDetail).State = EntityState.Unchanged; // Mark as unchanged
+                        car.Details[i] = existingDetail; // Link the existing detail to the current car
+                    }
+                }
+            }
+
+            // Handle CarServices - Add new services if their Id is -1 (new)
+            for (int i = 0; i < car.Services.Count; i++)
+            {
+                var service = car.Services[i];
+                if (service.Id == -1)
+                {
+                    service.Id = 0; // Reset Id to 0 (EF Core will generate a new Id)
+                    _context.CarServices.Add(service); // Add new CarService
+                }
+                else
+                {
+                    // Optionally, check if the CarService already exists and attach it
+                    var existingService = await _context.CarServices.FindAsync(service.Id);
+                    if (existingService != null)
+                    {
+                        _context.Entry(existingService).State = EntityState.Unchanged; // Mark as unchanged
+                        car.Services[i] = existingService; // Link the existing service to the current car
+                    }
+                }
+            }
+
+            // Handle Location - Add new location if it has an Id of -1
+            if (car.Location != null && car.Location.Id == -1)
+            {
+                car.Location.Id = 0; // Reset Id to 0 (EF Core will generate a new Id)
+                _context.Locations.Add(car.Location); // Add new Location
+            }
+            else
+            {
+                // If Location exists (not new), we link the existing Location.
+                var existingLocation = await _context.Locations.FindAsync(car.Location?.Id);
+                if (existingLocation != null)
+                {
+                    car.Location = existingLocation; // Link existing Location
+                }
+            }
+
+            // Add the Car object itself (with linked CarDetails, CarServices, Location)
             _context.Cars.Add(car);
+
+            // Save changes to the database
             await _context.SaveChangesAsync();
 
+            // Return a response with the newly created car
             return CreatedAtAction(nameof(Get), new { id = car.Id }, car);
         }
+
+
+
 
         // PUT: api/Car/5
         [HttpPut("{id}")]

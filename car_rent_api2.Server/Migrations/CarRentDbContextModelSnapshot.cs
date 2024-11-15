@@ -21,13 +21,40 @@ namespace car_rent_api2.Server.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CarCarDetail", b =>
+                {
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DetailsId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CarId", "DetailsId");
+
+                    b.HasIndex("DetailsId");
+
+                    b.ToTable("CarCarDetails", (string)null);
+                });
+
+            modelBuilder.Entity("CarCarService", b =>
+                {
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServicesId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CarId", "ServicesId");
+
+                    b.HasIndex("ServicesId");
+
+                    b.ToTable("CarCarServices", (string)null);
+                });
+
             modelBuilder.Entity("car_rent_api2.Server.Car", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -50,12 +77,7 @@ namespace car_rent_api2.Server.Migrations
                     b.Property<int>("Year")
                         .HasColumnType("int");
 
-                    b.Property<int?>("locationId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("locationId");
 
                     b.ToTable("Cars");
                 });
@@ -68,9 +90,6 @@ namespace car_rent_api2.Server.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CarId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -80,8 +99,6 @@ namespace car_rent_api2.Server.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarId");
 
                     b.ToTable("CarDetails");
                 });
@@ -93,9 +110,6 @@ namespace car_rent_api2.Server.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CarId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -109,8 +123,6 @@ namespace car_rent_api2.Server.Migrations
                         .HasColumnType("float");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CarId");
 
                     b.ToTable("CarServices");
                 });
@@ -133,39 +145,54 @@ namespace car_rent_api2.Server.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Locations");
                 });
 
-            modelBuilder.Entity("car_rent_api2.Server.Car", b =>
+            modelBuilder.Entity("CarCarDetail", b =>
                 {
-                    b.HasOne("car_rent_api2.Server.Location", "location")
+                    b.HasOne("car_rent_api2.Server.Car", null)
                         .WithMany()
-                        .HasForeignKey("locationId");
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("location");
+                    b.HasOne("car_rent_api2.Server.CarDetail", null)
+                        .WithMany()
+                        .HasForeignKey("DetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
-            modelBuilder.Entity("car_rent_api2.Server.CarDetail", b =>
+            modelBuilder.Entity("CarCarService", b =>
                 {
                     b.HasOne("car_rent_api2.Server.Car", null)
-                        .WithMany("Details")
-                        .HasForeignKey("CarId");
-                });
+                        .WithMany()
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-            modelBuilder.Entity("car_rent_api2.Server.CarService", b =>
-                {
-                    b.HasOne("car_rent_api2.Server.Car", null)
-                        .WithMany("Services")
-                        .HasForeignKey("CarId");
+                    b.HasOne("car_rent_api2.Server.CarService", null)
+                        .WithMany()
+                        .HasForeignKey("ServicesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.Car", b =>
                 {
-                    b.Navigation("Details");
+                    b.HasOne("car_rent_api2.Server.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Services");
+                    b.Navigation("Location");
                 });
 #pragma warning restore 612, 618
         }

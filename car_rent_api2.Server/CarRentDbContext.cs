@@ -13,5 +13,27 @@ namespace car_rent_api2.Server
         public DbSet<Location> Locations { get; set; }
         public DbSet<CarDetail> CarDetails { get; set; }
         public DbSet<CarService> CarServices { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configuring the many-to-many relationship between Car and CarDetails
+            modelBuilder.Entity<Car>()
+                .HasMany(c => c.Details)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("CarCarDetails"));
+
+            // Configuring the many-to-many relationship between Car and CarServices
+            modelBuilder.Entity<Car>()
+                .HasMany(c => c.Services)
+                .WithMany()
+                .UsingEntity(j => j.ToTable("CarCarServices"));
+
+            modelBuilder.Entity<Car>()
+             .HasOne(c => c.Location)  // Each car has one location
+             .WithMany()  // A location can have many cars
+             .HasForeignKey(c => c.Id);
+        }
     }
 }
