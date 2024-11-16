@@ -23,7 +23,7 @@ jobs:
       
       - name: Update database
         run: |
-          dotnet ef database update -c CarRentDbContext
+          dotnet ef database update -c CarRentDbContext --project car_rent_api2.Server
         env:
           ASPNETCORE_ENVIRONMENT: Development
 
