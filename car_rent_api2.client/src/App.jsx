@@ -7,9 +7,9 @@ import Location from './CarLocation';
 function App()
 {
     const [data, setData] = useState([]);
-    const [search, setSearch] = useState(''); 
+    const [search, setSearch] = useState('');
     const [carsToDisplay, setCarsToDisplay] = useState([]);
-    const [editingCar, setEditingCar] = useState(null); 
+    const [editingCar, setEditingCar] = useState(null);
 
 
     const fetchCarList = async () =>
@@ -38,7 +38,7 @@ function App()
 
     const handleEdit = (car) =>
     {
-        setEditingCar(car); 
+        setEditingCar(car);
     };
 
     const handleDelete = async (car) =>
@@ -52,14 +52,14 @@ function App()
 
     const handleCarAddedOrEdited = () =>
     {
-        fetchCarList(); 
-        setEditingCar(null); 
+        fetchCarList();
+        setEditingCar(null);
         filterCars();
     };
 
     const filterCars = () =>
     {
-        
+
         if (search === '')
         {
             setCarsToDisplay(data);
@@ -115,7 +115,8 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
 {
     const [carDetails, setCarDetails] = useState([]);
     const [carService, setCarService] = useState([]);
-    const [carLocation, setCarLocation] = useState({ name: "", longitude: 0, latitude:0, address:"", id:-1 });
+    const [carLocation, setCarLocation] = useState({ name: "", longitude: 0, latitude: 0, address: "", id: -1 });
+    const [file, setFile] = useState(null);
 
     const [formData, setFormData] = useState({
         id: -1,
@@ -131,9 +132,15 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
     {
         if (editingCar)
         {
-            setFormData(editingCar); 
+            setFormData(editingCar);
         }
     }, [editingCar]);
+
+    const handleFileChange = (event) =>
+    {
+        const selectedFile = event.target.files[0];
+        setFile(selectedFile);
+    };
 
     const handleInputChange = (e) =>
     {
@@ -145,49 +152,66 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
     {
         e.preventDefault();
 
-        var newCar = {};
-        if (editingCar)
-            newCar.id = editingCar.id;
-        newCar.brand = formData.brand;
-        newCar.model = formData.model;
-        newCar.year = formData.year;
-        newCar.photo = "";
-        newCar.isrented = false;
-        newCar.price = formData.price;
-        newCar.location = carLocation;
-        newCar.details = carDetails;
-        newCar.services = carService;
-        console.log(JSON.stringify(newCar));
+        const formDataFile = new FormData();
+        formDataFile.append("file", file);
 
-        if (editingCar)
+        const response = await fetch("/api/images/upload", {
+            method: "POST",
+            body: formDataFile,
+        });
+
+        if (response.ok)
         {
-            // Update car (PUT request)
-            const response = await fetch(`api/Car/${editingCar.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCar),
-            });
+            const result = await response.json();
+            var file_path = result.filePath;
+            console.log(file_path)
 
-            if (response.ok)
+            var newCar = {};
+            if (editingCar)
+                newCar.id = editingCar.id;
+            newCar.brand = formData.brand;
+            newCar.model = formData.model;
+            newCar.year = formData.year;
+            newCar.photo = file_path;
+            newCar.isrented = false;
+            newCar.price = formData.price;
+            newCar.location = carLocation;
+            newCar.details = carDetails;
+            newCar.services = carService;
+            console.log(JSON.stringify(newCar));
+
+            if (editingCar)
             {
-                onCarAddedOrEdited();
-                clearForm();
+                // Update car (PUT request)
+                const response = await fetch(`api/Car/${editingCar.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCar),
+                });
+
+                if (response.ok)
+                {
+                    onCarAddedOrEdited();
+                    clearForm();
+                }
+            }
+            else
+            {
+                const response = await fetch('api/Car', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCar),
+                });
+
+                if (response.ok)
+                {
+                    onCarAddedOrEdited();
+                    clearForm();
+                }
             }
         }
-        else
-        {
-            const response = await fetch('api/Car', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCar),
-            });
 
-            if (response.ok)
-            {
-                onCarAddedOrEdited();
-                clearForm();
-            }
-        }
+
     };
 
     const clearForm = () =>
@@ -205,7 +229,7 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
             <input type="text" name="model" placeholder="Model" value={formData.model} onChange={handleInputChange} />
             <input type="number" name="year" placeholder="Year" value={formData.year} onChange={handleInputChange} />
             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} />
-            <input type="file" name="photo" placeholder="Photo" />
+            <input type="file" name="image" placeholder="image" accept="image/*" onChange={handleFileChange} />
             <CarDetails carId={formData.id} carDetails={carDetails} setCarDetails={setCarDetails} />
             <CarService carId={formData.id} carService={carService} setCarService={setCarService} />
             <Location carId={formData.id} location={carLocation} setLocation={setCarLocation} />
