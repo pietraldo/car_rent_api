@@ -90,6 +90,7 @@ function App()
                 <Formularz
                     onCarAddedOrEdited={handleCarAddedOrEdited}
                     editingCar={editingCar}
+                    setEditingCar={setEditingCar}
                 />
             </div>
             <div className="section">
@@ -110,7 +111,7 @@ function App()
     );
 }
 
-function Formularz({ onCarAddedOrEdited, editingCar})
+function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
 {
     const [carDetails, setCarDetails] = useState([]);
     const [carService, setCarService] = useState([]);
@@ -169,9 +170,11 @@ function Formularz({ onCarAddedOrEdited, editingCar})
 
             if (response.ok)
             {
-                onCarAddedOrEdited(); 
+                onCarAddedOrEdited();
+                clearForm();
             }
-        } else
+        }
+        else
         {
             const response = await fetch('api/Car', {
                 method: 'POST',
@@ -181,11 +184,20 @@ function Formularz({ onCarAddedOrEdited, editingCar})
 
             if (response.ok)
             {
-                onCarAddedOrEdited(); 
-                setFormData({ brand: '', model: '', year: '', price: '', location: '' }); 
+                onCarAddedOrEdited();
+                clearForm();
             }
         }
     };
+
+    const clearForm = () =>
+    {
+        setEditingCar(null);
+        setFormData({ brand: '', model: '', year: '', price: '', location: '' });
+        setCarDetails([]);
+        setCarService([]);
+        setCarLocation({ name: "", longitude: 0, latitude: 0, address: "", id: -1 });
+    }
 
     return (
         <div className="car-form">
@@ -198,6 +210,7 @@ function Formularz({ onCarAddedOrEdited, editingCar})
             <CarService carId={formData.id} carService={carService} setCarService={setCarService} />
             <Location carId={formData.id} location={carLocation} setLocation={setCarLocation} />
             <button onClick={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
+            <button onClick={clearForm} type="submit">Cancel</button>
         </div>
     );
 }

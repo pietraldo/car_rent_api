@@ -47,6 +47,10 @@ function CarDetails({ carId, carDetails, setCarDetails })
         {
             setSearchString(value);
         }
+        else
+        {
+            setSearchString("");
+        }
     }
 
     useEffect(() =>
