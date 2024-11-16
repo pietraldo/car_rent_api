@@ -3,6 +3,8 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+car_rent_api2.Server/wwwroot/images
+
 # User-specific files
 *.rsuser
 *.suo

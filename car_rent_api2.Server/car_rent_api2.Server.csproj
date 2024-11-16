@@ -32,4 +32,9 @@
     <Folder Include="Migrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\images\images.jpg" />
+    <None Include="wwwroot\images\pobrane.jpg" />
+  </ItemGroup>
+
 </Project>
