@@ -21,13 +21,13 @@ jobs:
         with:
           dotnet-version: '8.x'
       
-      # Install dotnet-ef tool
-      - name: Install dotnet-ef tool
-        run: dotnet tool install --global dotnet-ef
-
-      # Add the .NET tools directory to PATH
-      - name: Add .NET tools to PATH
-        run: echo "::add-path::${HOME}/.dotnet/tools"
+      - name: Update database
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet tool restore
+          dotnet ef database update -c CarRentDbContext
+        env:
+          ASPNETCORE_ENVIRONMENT: Development
 
       # Build the .NET Core backend
       - name: Build with dotnet
@@ -73,13 +73,7 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_419B4D7D0AAF45B883FC5B24046CCEFB }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_02D619031269450C8A777F5D8688EE61 }}
       
-      # Apply database migrations
-      - name: Apply database migrations
-        run: dotnet ef database update
-        env:
-          ASPNETCORE_ENVIRONMENT: 'Production'
-          DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
-          
+      # Deploy to Azure    
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
