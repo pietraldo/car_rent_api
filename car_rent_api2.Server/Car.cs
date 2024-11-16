@@ -9,7 +9,7 @@ namespace car_rent_api2.Server
         public string Model { get; set; }
         public int Year { get; set; }
         public string Photo { get; set; }
-        public bool IsRented { get; set; }
+        public string Status{ get; set; }
         public double Price { get; set; }
 
         public int LocationId { get; set; }

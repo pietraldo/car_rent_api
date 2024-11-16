@@ -124,7 +124,7 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
         model: '',
         year: 0,
         price: 0,
-        isrented: false,
+        status: "norented",
         photo: ''
     });
 
@@ -152,65 +152,68 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
     {
         e.preventDefault();
 
+        
         const formDataFile = new FormData();
-        formDataFile.append("file", file);
 
-        const response = await fetch("/api/images/upload", {
-            method: "POST",
-            body: formDataFile,
-        });
+        var file_path = formData.photo;
 
-        if (response.ok)
+        if (file)
         {
+            formDataFile.append("file", file);
+            const response = await fetch("/api/images/upload", {
+                method: "POST",
+                body: formDataFile,
+            });
             const result = await response.json();
-            var file_path = result.filePath;
-            console.log(file_path)
-
-            var newCar = {};
-            if (editingCar)
-                newCar.id = editingCar.id;
-            newCar.brand = formData.brand;
-            newCar.model = formData.model;
-            newCar.year = formData.year;
-            newCar.photo = file_path;
-            newCar.isrented = false;
-            newCar.price = formData.price;
-            newCar.location = carLocation;
-            newCar.details = carDetails;
-            newCar.services = carService;
-            console.log(JSON.stringify(newCar));
-
-            if (editingCar)
-            {
-                // Update car (PUT request)
-                const response = await fetch(`api/Car/${editingCar.id}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCar),
-                });
-
-                if (response.ok)
-                {
-                    onCarAddedOrEdited();
-                    clearForm();
-                }
-            }
-            else
-            {
-                const response = await fetch('api/Car', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newCar),
-                });
-
-                if (response.ok)
-                {
-                    onCarAddedOrEdited();
-                    clearForm();
-                }
-            }
+            file_path = result.filePath;
         }
 
+        
+        console.log(file_path)
+
+        var newCar = {};
+        if (editingCar)
+            newCar.id = editingCar.id;
+        newCar.brand = formData.brand;
+        newCar.model = formData.model;
+        newCar.year = formData.year;
+        newCar.photo = file_path;
+        newCar.status = "norented";
+        newCar.price = formData.price;
+        newCar.location = carLocation;
+        newCar.details = carDetails;
+        newCar.services = carService;
+        console.log(JSON.stringify(newCar));
+
+        if (editingCar)
+        {
+            // Update car (PUT request)
+            const response = await fetch(`api/Car/${editingCar.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCar),
+            });
+
+            if (response.ok)
+            {
+                onCarAddedOrEdited();
+                clearForm();
+            }
+        }
+        else
+        {
+            const response = await fetch('api/Car', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newCar),
+            });
+
+            if (response.ok)
+            {
+                onCarAddedOrEdited();
+                clearForm();
+            }
+        }
 
     };
 

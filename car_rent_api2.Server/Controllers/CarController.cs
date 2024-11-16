@@ -63,8 +63,8 @@ namespace car_rent_api2.Server.Controllers
         {
 
             var filteredServices = await _context.CarServices
-                 .Where(x => x.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                             x.Description.Contains(search, StringComparison.OrdinalIgnoreCase))
+                 .Where(x => x.Name.ToLower().Contains(search.ToLower()) ||
+                             x.Description.ToLower().Contains(search.ToLower()))
                  .ToListAsync();
 
             return Ok(filteredServices);
@@ -208,6 +208,14 @@ namespace car_rent_api2.Server.Controllers
                 car.Location.Id = 0;
                 _context.Locations.Add(car.Location);
                 existingCar.Location = car.Location;
+            }
+            else if (car.Location != null)
+            {
+                var existingLocation = await _context.Locations.FindAsync(car.Location.Id);
+                if (existingLocation != null)
+                {
+                    existingCar.Location = existingLocation;
+                }
             }
 
             // removing details that are not in the new car
