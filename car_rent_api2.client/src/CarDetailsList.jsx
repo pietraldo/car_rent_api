@@ -20,6 +20,7 @@ function CarDetails({ carId, carDetails, setCarDetails })
     useEffect(() =>
     {
         fetchCarDetails();
+        console.log(carId);
     }, [carId]);
 
     const handleAddClick = () =>

@@ -3,7 +3,7 @@
 
 namespace car_rent_api2.Server
 {
-    public class CarRentDbContext: DbContext
+    public class CarRentDbContext : DbContext
     {
         public CarRentDbContext(DbContextOptions<CarRentDbContext> options) : base(options)
         {
@@ -31,9 +31,10 @@ namespace car_rent_api2.Server
                 .UsingEntity(j => j.ToTable("CarCarServices"));
 
             modelBuilder.Entity<Car>()
-             .HasOne(c => c.Location)  // Each car has one location
-             .WithMany()  // A location can have many cars
-             .HasForeignKey(c => c.Id);
+            .HasOne(c => c.Location) // Car has one Location
+            .WithMany()              // Location has many Cars
+            .HasForeignKey(c => c.LocationId) // Foreign key in Car table
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

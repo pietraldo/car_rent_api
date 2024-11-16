@@ -117,15 +117,11 @@ function Formularz({ onCarAddedOrEdited, editingCar})
     const [carLocation, setCarLocation] = useState({ name: "", longitude: 0, latitude:0, address:"", id:-1 });
 
     const [formData, setFormData] = useState({
-        id: 0,
+        id: -1,
         brand: '',
         model: '',
         year: 0,
         price: 0,
-        location: {
-            longitude: 0,
-            latitude: 0
-        },
         isrented: false,
         photo: ''
     });
@@ -149,6 +145,8 @@ function Formularz({ onCarAddedOrEdited, editingCar})
         e.preventDefault();
 
         var newCar = {};
+        if (editingCar)
+            newCar.id = editingCar.id;
         newCar.brand = formData.brand;
         newCar.model = formData.model;
         newCar.year = formData.year;
@@ -196,9 +194,9 @@ function Formularz({ onCarAddedOrEdited, editingCar})
             <input type="number" name="year" placeholder="Year" value={formData.year} onChange={handleInputChange} />
             <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} />
             <input type="file" name="photo" placeholder="Photo" />
-            <CarDetails carId={2} carDetails={carDetails} setCarDetails={setCarDetails} />
-            <CarService carId={2} carService={carService} setCarService={setCarService} />
-            <Location carId={2} location={carLocation} setLocation={setCarLocation} />
+            <CarDetails carId={formData.id} carDetails={carDetails} setCarDetails={setCarDetails} />
+            <CarService carId={formData.id} carService={carService} setCarService={setCarService} />
+            <Location carId={formData.id} location={carLocation} setLocation={setCarLocation} />
             <button onClick={handleFormSubmit} type="submit">{editingCar ? 'Edit' : 'Add'}</button>
         </div>
     );

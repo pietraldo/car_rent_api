@@ -59,23 +59,25 @@ namespace car_rent_api2.Server.Migrations
                 name: "Cars",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Model = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Year = table.Column<int>(type: "int", nullable: false),
                     Photo = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRented = table.Column<bool>(type: "bit", nullable: false),
-                    Price = table.Column<double>(type: "float", nullable: false)
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    LocationId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cars", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cars_Locations_Id",
-                        column: x => x.Id,
+                        name: "FK_Cars_Locations_LocationId",
+                        column: x => x.LocationId,
                         principalTable: "Locations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -135,6 +137,11 @@ namespace car_rent_api2.Server.Migrations
                 name: "IX_CarCarServices_ServicesId",
                 table: "CarCarServices",
                 column: "ServicesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cars_LocationId",
+                table: "Cars",
+                column: "LocationId");
         }
 
         /// <inheritdoc />

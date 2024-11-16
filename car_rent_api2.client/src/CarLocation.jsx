@@ -24,9 +24,8 @@ function Location({ carId, location, setLocation })
 
     const handleInputChange = (field, value) =>
     {
-        setLocation({ ...location, [field]: value });
-        setLocation({ ...location, id: -1 });
-
+        setLocation({ ...location, [field]: value, id: -1 });
+        
         if (field === "name" || field === "address")
         {
             setSearchString(value);

@@ -1,4 +1,6 @@
-﻿namespace car_rent_api2.Server
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace car_rent_api2.Server
 {
     public class Car
     {
@@ -9,7 +11,10 @@
         public string Photo { get; set; }
         public bool IsRented { get; set; }
         public double Price { get; set; }
-        public Location? Location { get; set; }
+
+        public int LocationId { get; set; }
+        public Location Location { get; set; }
+
 
         public List<CarDetail> Details { get; set; }
 
