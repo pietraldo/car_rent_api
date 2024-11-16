@@ -193,14 +193,74 @@ namespace car_rent_api2.Server.Controllers
                 .Include(c => c.Details)
                 .Include(c => c.Services)
                 .FirstOrDefaultAsync(c => c.Id == id);
-
-            _context.Entry(existingCar).CurrentValues.SetValues(car);
-
-            car.Location.Id = 0; // Ensure EF Core generates a new ID
-            _context.Locations.Add(car.Location);
-            existingCar.Location = car.Location;
-
+            if(existingCar==null) return NotFound();
             
+            existingCar.Brand = car.Brand;
+            existingCar.Model = car.Model;
+            existingCar.Year = car.Year;
+            existingCar.Photo = car.Photo;
+            existingCar.Price = car.Price;
+
+
+            //seting location
+            if (car.Location!=null && car.Location.Id==-1)
+            {
+                car.Location.Id = 0;
+                _context.Locations.Add(car.Location);
+                existingCar.Location = car.Location;
+            }
+
+            // removing details that are not in the new car
+            var detailsToRemove = existingCar.Details
+            .Where(d => !car.Details.Any(cd => cd.Id == d.Id && cd.Id != -1))
+            .ToList();
+
+            foreach (var detail in detailsToRemove)
+            {
+                _context.CarDetails.Remove(detail);
+            }
+
+            // addoing new and those that are not yet in existing car
+            foreach (var detail in car.Details)
+            {
+                if (detail.Id == -1)
+                {
+                    detail.Id = 0;
+                    _context.CarDetails.Add(detail);
+                    existingCar.Details.Add(detail);
+                }
+                else if(!existingCar.Details.Exists(d => d.Id == detail.Id))
+                {
+                    existingCar.Details.Add(detail);
+                }
+            }
+
+
+            // seting services
+
+            // Removing services that are not in the new car
+            var servicesToRemove = existingCar.Services
+                .Where(s => !car.Services.Any(cs => cs.Id == s.Id && cs.Id != -1))
+                .ToList();
+
+            foreach (var service in servicesToRemove)
+            {
+                _context.CarServices.Remove(service);  
+            }
+
+            foreach (var service in car.Services)
+            {
+                if (service.Id == -1)  
+                {
+                    service.Id = 0;  
+                    _context.CarServices.Add(service);  
+                    existingCar.Services.Add(service);  
+                }
+                else if (!existingCar.Services.Exists(s => s.Id == service.Id))  
+                {
+                    existingCar.Services.Add(service);  
+                }
+            }
 
             await _context.SaveChangesAsync();
             
