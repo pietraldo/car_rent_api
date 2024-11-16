@@ -23,8 +23,6 @@ jobs:
       
       - name: Update database
         run: |
-          dotnet tool install --global dotnet-ef
-          dotnet tool restore
           dotnet ef database update -c CarRentDbContext
         env:
           ASPNETCORE_ENVIRONMENT: Development
