@@ -15,6 +15,12 @@
     margin: auto;
 }
 
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+}
+
 .section {
     background-color: #f8f8f8;
     padding: 16px;

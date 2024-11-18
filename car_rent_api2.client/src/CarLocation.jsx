@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import './CarLocation.css';
+import './css/CarLocation.css';
 
 function Location({ carId, location, setLocation })
 {
