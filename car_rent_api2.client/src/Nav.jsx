@@ -19,6 +19,11 @@ function Nav()
                         <FaCar className="icon" /> Available Cars
                     </Link>
                 </li>
+                <li>
+                    <Link to="/addeditcar" className="navbar-link">
+                        <FaCar className="icon" /> Add/Edit Car
+                    </Link>
+                </li>
             </ul>
         </nav>
     );
