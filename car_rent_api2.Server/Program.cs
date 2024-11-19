@@ -35,8 +35,8 @@ builder.Services.AddAuthentication(options =>
     .AddCookie(setup => setup.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime))
     .AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = configuration["Authentication:Google:ClientId"] ?? throw new InvalidOperationException("Missing Google API client ID");
-        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"] ?? throw new InvalidOperationException("Missing Google API secret");
+        googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_ID") ?? throw new InvalidOperationException("Missing Google API client ID");
+        googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_SECRET") ?? throw new InvalidOperationException("Missing Google API secret");
     });
 
 builder.Services.AddAuthorization();
