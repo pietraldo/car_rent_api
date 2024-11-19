@@ -43,13 +43,11 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>();
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.MapIdentityApi<ApplicationUser>();
 
 app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager)=> {
     await signInManager.SignOutAsync();
