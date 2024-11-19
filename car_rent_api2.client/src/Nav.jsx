@@ -25,8 +25,10 @@ function Nav()
                     </Link>
                 </li>
                 <li>
-                    <a href="/api/Identity/google-login" className="navbar-link" data-method="post">Login with
-                        Google</a>
+                    <form action="/api/Identity/google-login" method="post">
+                        <button type="submit" name="login-with-google" value="login-with-google" className="navbar-link">Login with
+                            Google</button>
+                    </form>
                 </li>
             </ul>
         </nav>
