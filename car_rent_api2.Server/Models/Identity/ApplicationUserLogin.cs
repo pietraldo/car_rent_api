@@ -2,7 +2,7 @@
 
 namespace car_rent_api2.Server.Models;
 
-public class CarRentUser : IdentityUser
+public class ApplicationUserLogin:IdentityUserLogin<Guid>
 {
     
 }

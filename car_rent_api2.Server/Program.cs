@@ -40,18 +40,18 @@ builder.Services.AddAuthentication(options =>
     });
 
 builder.Services.AddAuthorization();
-builder.Services.AddIdentity<CarRentUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
     .AddDefaultTokenProviders();
-builder.Services.AddIdentityApiEndpoints<CarRentUser>();
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>();
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
-app.MapIdentityApi<CarRentUser>();
+app.MapIdentityApi<ApplicationUser>();
 
-app.MapPost("/logout", async (SignInManager<CarRentUser> signInManager)=> {
+app.MapPost("/logout", async (SignInManager<ApplicationUser> signInManager)=> {
     await signInManager.SignOutAsync();
     return Results.Ok();
 }).RequireAuthorization();
