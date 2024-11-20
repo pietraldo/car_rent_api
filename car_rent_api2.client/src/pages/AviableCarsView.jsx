@@ -28,7 +28,7 @@ function AviableCarsView()
             if (response.ok)
             {
                 const jsonData = await response.json();
-                cars.push(jsonData);
+                cars.unshift(jsonData);
             }
         }
         setCarsFiltered(cars.flat());
