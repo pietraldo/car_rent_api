@@ -17,13 +17,17 @@ namespace car_rent_api2.Server.Controllers
             _context = context;
         }
 
-        // GET: api/Car
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<Car>>> Get(string status)
         {
             return await _context.Cars.Where(c=>c.Status==status).ToListAsync();
         }
 
-        
+        [HttpGet("currentstatuses")]
+        public async Task<ActionResult<IEnumerable<string>>> Get()
+        {
+            return new List<string>() { "rented", "available", "norented", "in_repair"};
+            //return await _context.Cars.Select(c => c.Status).Distinct().ToListAsync();
+        }
     }
 }

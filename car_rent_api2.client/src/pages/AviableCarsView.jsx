@@ -3,43 +3,104 @@ import { useState, useEffect } from "react";
 function AviableCarsView()
 {
     const [carsToDisplay, setCarsToDisplay] = useState([]);
+    const [carStatus, setCarStatus] = useState([]);
+    const [filterStatus, setFilterStatus] = useState([]);
+    const [searchString, setSearchString] = useState("");
+    const [carsFiltered, setCarsFiltered] = useState([]);
 
-    const fetchCarList = async () =>
+
+    const fetchCarStatuses = async () =>
     {
-        const response = await fetch('api/Car');
+        const response = await fetch("api/CarStatus/currentstatuses");
         if (response.ok)
         {
             const jsonData = await response.json();
-            setCarsToDisplay(jsonData);
+            setCarStatus(jsonData);
         }
-        filterCars();
     };
 
-    const handleSearchResults = (e) =>
+    const fetchCarList = async () =>
     {
+        const cars = [];
+        for (const filter of filterStatus)
+        {
+            const response = await fetch(`api/CarStatus/status/${filter}`);
+            if (response.ok)
+            {
+                const jsonData = await response.json();
+                cars.push(jsonData);
+            }
+        }
+        setCarsFiltered(cars.flat());
+    };
 
-    }
+
+    useEffect(() =>
+    {
+        const filtered = carsFiltered.filter((car) =>
+        {
+            const matchesSearch =
+                searchString === "" ||
+                car.brand.toLowerCase().includes(searchString.toLowerCase()) ||
+                car.model.toLowerCase().includes(searchString.toLowerCase());
+            return matchesSearch;
+        });
+        setCarsToDisplay(filtered);
+    }, [carsFiltered, searchString]);
+
 
     useEffect(() =>
     {
         fetchCarList();
+    }, [filterStatus]);
+
+
+    useEffect(() =>
+    {
+        fetchCarStatuses();
     }, []);
+
+    const handleSearchResults = (e) =>
+    {
+        setSearchString(e.target.value);
+    };
+
+    const handleChangeFilter = (e) =>
+    {
+        if (e.target.checked)
+        {
+            setFilterStatus([...filterStatus, e.target.value]);
+        } else
+        {
+            setFilterStatus(filterStatus.filter((status) => status !== e.target.value));
+        }
+    };
 
     return (
         <div className="container">
             <div className="section">
                 <h1>Car List</h1>
-                <input type="text" placeholder="Search..." className="searchInput" onChange={handleSearchResults} />
-                <select className="searchSelect" onChange={handleSearchResults}>
-                    <option>Brand</option>
-                    <option>Model</option>
-                </select>
+                <input
+                    type="text"
+                    placeholder="Search..."
+                    className="searchInput"
+                    onChange={handleSearchResults}
+                />
+                <div className="filterSelect">
+                    {carStatus.map((status) => (
+                        <label key={status}>
+                            <input
+                                type="checkbox"
+                                value={status}
+                                onChange={handleChangeFilter}
+                            />
+                            {status}
+                        </label>
+                    ))}
+                </div>
                 <div className="carList">
                     {carsToDisplay.map((car) => (
-                        <CarItem
-                            key={car.id}
-                            car={car}
-                        />
+                        <CarItem key={car.id} car={car} />
                     ))}
                 </div>
             </div>

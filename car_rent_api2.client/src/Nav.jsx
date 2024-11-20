@@ -24,6 +24,12 @@ function Nav()
                         <FaCar className="icon" /> Add/Edit Car
                     </Link>
                 </li>
+                <li>
+                    <form action="/api/Identity/google-login" method="post">
+                        <button type="submit" name="login-with-google" value="login-with-google" className="navbar-link">Login with
+                            Google</button>
+                    </form>
+                </li>
             </ul>
         </nav>
     );
