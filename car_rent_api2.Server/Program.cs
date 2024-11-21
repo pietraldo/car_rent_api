@@ -50,11 +50,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
     .AddDefaultTokenProviders().AddApiEndpoints();
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(builder => builder.WithOrigins("https://localhost:5173").AllowAnyHeader().AllowAnyMethod());
-});
-
 builder.Services.AddHttpLogging(o => {});
 
 // Add services
