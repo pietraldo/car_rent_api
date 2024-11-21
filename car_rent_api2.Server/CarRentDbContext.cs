@@ -1,10 +1,11 @@
-﻿using car_rent_api2.Server.Models;
+using car_rent_api2.Server.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace car_rent_api2.Server
 {
-    public class CarRentDbContext : DbContext
+    public class CarRentDbContext : IdentityDbContext
     {
         public CarRentDbContext(DbContextOptions<CarRentDbContext> options) : base(options)
         {
