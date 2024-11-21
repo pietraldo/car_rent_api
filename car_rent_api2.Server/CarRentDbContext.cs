@@ -43,7 +43,7 @@ namespace car_rent_api2.Server
 
             modelBuilder.Entity<Rent>().HasOne(r=> r.Car).WithMany().HasForeignKey(r => r.CarId).OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Rent>().HasOne(r => r.Client).WithMany().HasForeignKey(r => r.ClientId).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Rent>().HasOne(r => r.Employee).WithMany().HasForeignKey(r => r.EmployeeId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Employee).WithMany().HasForeignKey(r => r.EmployeeId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
         }
     }
 }

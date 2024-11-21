@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using car_rent_api2.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+// Database connection
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<CarRentDbContext>(options =>
@@ -27,6 +30,7 @@ builder.Services.AddDbContext<CarRentDbContext>(options =>
 
 var configuration = builder.Configuration;
 
+// Authentication and Authorization
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -43,6 +47,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
     .AddDefaultTokenProviders();
+
+// Add services
+builder.Services.AddSingleton<IOfferManager, OfferManager>();
 
 var app = builder.Build();
 
