@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using car_rent_api2.Server.Models;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -15,6 +14,10 @@ namespace car_rent_api2.Server
         public DbSet<Location> Locations { get; set; }
         public DbSet<CarDetail> CarDetails { get; set; }
         public DbSet<CarService> CarServices { get; set; }
+
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<Employee> Employees { get; set; }
+        public DbSet<Rent> Rents { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -37,6 +40,10 @@ namespace car_rent_api2.Server
             .WithMany()              // Location has many Cars
             .HasForeignKey(c => c.LocationId) // Foreign key in Car table
             .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Rent>().HasOne(r=> r.Car).WithMany().HasForeignKey(r => r.CarId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Client).WithMany().HasForeignKey(r => r.ClientId).OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Employee).WithMany().HasForeignKey(r => r.EmployeeId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
         }
     }
 }

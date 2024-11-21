@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using car_rent_api2.Server.Models;
+using car_rent_api2.Server.Services;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,27 +14,115 @@ namespace car_rent_api2.Server.Controllers
     public class OfferController : ControllerBase
     {
         private readonly CarRentDbContext _context;
+        private readonly IOfferManager _offerManager;
 
-        public OfferController(CarRentDbContext context)
+        public OfferController(CarRentDbContext context, IOfferManager offerManager)
         {
             _context = context;
+            _offerManager = offerManager;
         }
 
         // GET: api/Offer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<string>>> Get()
+        public async Task<ActionResult<IEnumerable<List<Offer>>>> Get(DateTime startDate, 
+            DateTime endDate, string brand="", string model="", int clientId=0)
         {
-            List<string> offers = new List<string>();
-            offers.Add("Offer 1");
-            offers.Add("Offer 2");
-            string a = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-            foreach (DictionaryEntry de in Environment.GetEnvironmentVariables())
-                offers.Add((string)de.Key);
+            if (startDate >= endDate)
+            {
+                return BadRequest("Invalid date range. Start date must be earlier than end date.");
+            }
 
+            var carsQuery = _context.Cars
+                .Where(c => c.Status == "available")
+                .Include(c => c.Details)
+                .Include(c => c.Services).AsQueryable();
 
-            return offers;
+            // Filter by brand if specified
+            if (!string.IsNullOrEmpty(brand))
+            {
+                carsQuery = carsQuery.Where(c => c.Brand == brand);
+            }
+
+            // Filter by model if specified
+            if (!string.IsNullOrEmpty(model))
+            {
+                carsQuery = carsQuery.Where(c => c.Model == model);
+            }
+
+            
+            var cars = await carsQuery
+                .Where(c => !_context.Rents.Any(r =>
+                    r.CarId == c.Id &&
+                    (r.StartDate < endDate && r.EndDate > startDate))) 
+                .ToListAsync();
+
+            List<Offer> offers = new List<Offer>();
+            foreach (var car in cars)
+            {
+                Offer offer = new Offer
+                {
+                    Car = car,
+                    ClientId = clientId,
+                    Price = car.Price,
+                    StartDate = startDate,
+                    EndDate = endDate
+                };
+                offers.Add(offer);
+            }   
+            foreach(var offer in offers)
+            {
+                offer.Id = _offerManager.AddOffer(offer);
+            }
+
+            return Ok(offers);
         }
 
+
+        [HttpGet("rentCar/{offerId}")]
+        public async Task<ActionResult<string>> Get(string offerId)
+        {
+            if(!Guid.TryParse(offerId, out Guid guid))
+            {
+                return BadRequest("Invalid offer id");
+            }
+
+            Offer? offer = _offerManager.GetOffer(guid);
+            if(offer == null)
+            {
+                return BadRequest("Offer not found or expired");
+            }
+
+            if(offer.ClientId==0)
+            {
+                return BadRequest("You must be logged in");
+            }
+
+            // TODO: check if it is still valid offer (if someone did not reate rent in the meantime)
+
+            // check client id
+            var client = await _context.Clients.FindAsync(offer.ClientId);
+            if (client == null)
+            {
+                return BadRequest("Client not found");
+            }
+
+
+            Rent rent = new Rent
+            {
+                CarId = offer.Car.Id,
+                ClientId = offer.ClientId,
+                StartDate = offer.StartDate,
+                EndDate = offer.EndDate,
+                Price = offer.Price,
+                Status = "reserved",
+                Notes = "",
+                LinkToPhotos = ""
+            };
+            _context.Rents.Add(rent);
+            await _context.SaveChangesAsync();
+
+            return Ok("car rent succesfull");
+        }
         
     }
 }

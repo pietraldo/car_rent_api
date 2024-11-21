@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using car_rent_api2.Server.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-Environment.SetEnvironmentVariable("DB_CONNECTION_STRING", "Server=localhost;Database=car_rent;Trusted_Connection=True;TrustServerCertificate=True;");
-Environment.SetEnvironmentVariable("AUTHENTICATION_GOOGLE_ID", "111973067990-qv3orig9e2d2shmib698d02ua0bgq4gl.apps.googleusercontent.com");
-Environment.SetEnvironmentVariable("AUTHENTICATION_GOOGLE_SECRET", "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");
-
+// Database connection
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<CarRentDbContext>(options =>
@@ -33,6 +31,7 @@ builder.Services.AddDbContext<CarRentDbContext>(options =>
 
 var configuration = builder.Configuration;
 
+// Authentication and Authorization
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -46,6 +45,7 @@ builder.Services.AddAuthentication(options =>
         googleOptions.CallbackPath = "/api/Identity/google-login-callback";
     });
 
+builder.Services.AddAuthorization();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
     .AddDefaultTokenProviders().AddApiEndpoints();
@@ -56,6 +56,9 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddHttpLogging(o => {});
+
+// Add services
+builder.Services.AddSingleton<IOfferManager, OfferManager>();
 
 var app = builder.Build();
 
