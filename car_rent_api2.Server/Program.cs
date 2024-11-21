@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(options =>
     {
         googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_ID") ?? throw new InvalidOperationException("Missing Google API client ID");
         googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_SECRET") ?? throw new InvalidOperationException("Missing Google API secret");
-        googleOptions.CallbackPath = "/api/Identity/google-login-callback";
+        googleOptions.CallbackPath = "/api/Identity/signin-google";
     });
 
 builder.Services.AddAuthorization();

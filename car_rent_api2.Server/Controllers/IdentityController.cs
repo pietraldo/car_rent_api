@@ -27,39 +27,50 @@ public class IdentityController : ControllerBase
         return Challenge(properties, "Google");
     }
     
-    [HttpGet]
+    [HttpGet("google-login-callback")]
     [AllowAnonymous]
-    [Route("google-login-callback")]
-    public async Task<IActionResult> GoogleLoginCallback()
+    public async Task<IActionResult> GoogleCallback()
     {
-        Console.WriteLine("Google callback");
-        
+        // Get external login info
         var info = await _signInManager.GetExternalLoginInfoAsync();
         if (info == null)
         {
-            return Unauthorized("Error during external login.");
+            return Unauthorized("Error: External login info could not be retrieved.");
         }
 
-        // Sign in the user with Google
-        var signInResult = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false);
+        // Attempt to sign in the user with external login info
+        var signInResult = await _signInManager.ExternalLoginSignInAsync(
+            info.LoginProvider,
+            info.ProviderKey,
+            isPersistent: false);
 
         if (signInResult.Succeeded)
         {
+            // User successfully signed in
             return Ok("Login successful!");
         }
 
-        // If the user does not exist, create them
+        // User doesn't exist in your system, create a new account
         var email = info.Principal.FindFirstValue(ClaimTypes.Email);
+        if (string.IsNullOrEmpty(email))
+        {
+            return BadRequest("Error: Email is not provided by the external provider.");
+        }
+
         var user = new IdentityUser { UserName = email, Email = email };
         var result = await _userManager.CreateAsync(user);
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            await _userManager.AddLoginAsync(user, info);
-            await _signInManager.SignInAsync(user, isPersistent: false);
-            return Ok("User created and logged in successfully!");
+            return BadRequest("Error: User creation failed.");
         }
 
-        return BadRequest("Failed to create user.");
+        // Link external login to the newly created user
+        await _userManager.AddLoginAsync(user, info);
+
+        // Sign in the user
+        await _signInManager.SignInAsync(user, isPersistent: false);
+
+        return Ok("User created and logged in successfully!");
     }
 }
