@@ -171,7 +171,7 @@ namespace car_rent_api2.Server.Controllers
                     car.Location = existingLocation; // Link existing Location
                 }
             }
-
+            car.Status = "available";
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = car.Id }, car);
