@@ -4,6 +4,7 @@ using car_rent_api2.Server.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
@@ -33,7 +34,7 @@ var configuration = builder.Configuration;
 // Authentication and Authorization
 builder.Services.AddAuthentication(options =>
     {
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
     })
     .AddCookie(setup => setup.ExpireTimeSpan = TimeSpan.FromMinutes(sessionCookieLifetime))
@@ -41,12 +42,15 @@ builder.Services.AddAuthentication(options =>
     {
         googleOptions.ClientId = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_ID") ?? throw new InvalidOperationException("Missing Google API client ID");
         googleOptions.ClientSecret = Environment.GetEnvironmentVariable("AUTHENTICATION_GOOGLE_SECRET") ?? throw new InvalidOperationException("Missing Google API secret");
+        googleOptions.CallbackPath = "/api/Identity/signin-google";
     });
 
 builder.Services.AddAuthorization();
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<CarRentDbContext>()
-    .AddDefaultTokenProviders();
+    .AddDefaultTokenProviders().AddApiEndpoints();
+
+builder.Services.AddHttpLogging(o => {});
 
 // Add services
 builder.Services.AddSingleton<IOfferManager, OfferManager>();
@@ -79,9 +83,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapIdentityApi<IdentityUser>();
 
 app.MapControllers();
 
 app.MapFallbackToFile("/index.html");
+
+app.UseHttpLogging();
 
 app.Run();
