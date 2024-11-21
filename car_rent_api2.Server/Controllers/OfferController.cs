@@ -92,20 +92,22 @@ namespace car_rent_api2.Server.Controllers
                 return BadRequest("Offer not found or expired");
             }
 
-            if(offer.ClientId==0)
-            {
-                return BadRequest("You must be logged in");
-            }
+            //TODO: make here loging
+            //if(offer.ClientId==0)
+            //{
+            //    return BadRequest("You must be logged in");
+            //}
 
             // TODO: check if it is still valid offer (if someone did not reate rent in the meantime)
 
             // check client id
-            var client = await _context.Clients.FindAsync(offer.ClientId);
-            if (client == null)
-            {
-                return BadRequest("Client not found");
-            }
-
+            //var client = await _context.Clients.FindAsync(offer.ClientId);
+            //if (client == null)
+            //{
+            //    return BadRequest("Client not found");
+            //}
+            //TODO: client idfind
+            offer.ClientId = 1;
 
             Rent rent = new Rent
             {
