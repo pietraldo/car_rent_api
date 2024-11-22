@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System.Collections;
+using System.Collections.Concurrent;
 using car_rent_api2.Server.Models;
 
 namespace car_rent_api2.Server.Services
@@ -43,5 +44,12 @@ namespace car_rent_api2.Server.Services
                 _offers.TryRemove(key, out _);
             }
         }
+
+        public IEnumerable GetAllOffers() => _offers.Select(x=>new
+        {
+            id = x.Key,
+            offer = x.Value.offer,
+            expiry = x.Value.Expiry
+        });
     }
 }

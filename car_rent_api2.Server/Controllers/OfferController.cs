@@ -181,5 +181,10 @@ namespace car_rent_api2.Server.Controllers
             return Ok("car rent succesfull");
         }
         
+        [HttpGet("offers")]
+        public ActionResult<IEnumerable> GetAllOffers()
+        {
+            return Ok(_offerManager.GetAllOffers());
+        }        
     }
 }
