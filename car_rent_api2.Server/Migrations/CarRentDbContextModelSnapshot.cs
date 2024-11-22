@@ -364,11 +364,8 @@ namespace car_rent_api2.Server.Migrations
 
             modelBuilder.Entity("car_rent_api2.Server.Models.Client", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -415,8 +412,9 @@ namespace car_rent_api2.Server.Migrations
                     b.Property<int>("CarId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("EmployeeId")
                         .HasColumnType("int");

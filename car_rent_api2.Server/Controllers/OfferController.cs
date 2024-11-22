@@ -25,7 +25,7 @@ namespace car_rent_api2.Server.Controllers
         // GET: api/Offer
         [HttpGet]
         public async Task<ActionResult<IEnumerable<List<Offer>>>> Get(DateTime startDate, 
-            DateTime endDate, string brand="", string model="", int clientId=0)
+            DateTime endDate, string brand="", string model="", string clientId="")
         {
             if (startDate >= endDate)
             {
@@ -77,9 +77,54 @@ namespace car_rent_api2.Server.Controllers
             return Ok(offers);
         }
 
+        [HttpPost("createClient")]
+        public async Task<ActionResult<string>> CreateClient([FromBody] Client client)
+        {
+            if (client == null || string.IsNullOrWhiteSpace(client.Id))
+            {
+                return BadRequest("Invalid client data");
+            }
 
-        [HttpGet("rentCar/{offerId}")]
-        public async Task<ActionResult<string>> Get(string offerId)
+            if (await _context.Clients.AnyAsync(c => c.Id == client.Id))
+            {
+                return BadRequest("Client already exists");
+            }
+
+            _context.Clients.Add(client);
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Error saving client: {ex.Message}");
+            }
+
+            return Ok(client.Id);
+        }
+
+        [HttpGet("checkClient/{id}")]
+        public async Task<ActionResult<string>> CheckClient(string id)
+        {
+            if (id == "")
+            {
+                return BadRequest("Client id must be provided");
+            }
+
+            if (await _context.Clients.AnyAsync(c => c.Id == id))
+            {
+                return Ok("Client found");
+            }
+            else
+            {
+                return NotFound("Client not found");
+            }
+        }
+
+
+
+        [HttpGet("rentCar/{offerId}/{clientId}")]
+        public async Task<ActionResult<string>> Get(string offerId, string clientId)
         {
             if(!Guid.TryParse(offerId, out Guid guid))
             {
@@ -92,11 +137,21 @@ namespace car_rent_api2.Server.Controllers
                 return BadRequest("Offer not found or expired");
             }
 
-            //TODO: make here loging
-            //if(offer.ClientId==0)
-            //{
-            //    return BadRequest("You must be logged in");
-            //}
+            if (offer.ClientId != "" && offer.ClientId!=clientId)
+            {
+                return BadRequest("You must be logged in");
+            }
+
+            // check if we have user with clientId in database
+            if (!await _context.Clients.AnyAsync(c => c.Id == clientId)) 
+            {
+                //Create new client
+
+                // send api to request data from user
+
+                return BadRequest("Client not found");
+            }
+
 
             // TODO: check if it is still valid offer (if someone did not reate rent in the meantime)
 
@@ -107,12 +162,12 @@ namespace car_rent_api2.Server.Controllers
             //    return BadRequest("Client not found");
             //}
             //TODO: client idfind
-            offer.ClientId = 1;
+
 
             Rent rent = new Rent
             {
                 CarId = offer.Car.Id,
-                ClientId = offer.ClientId,
+                ClientId = clientId,
                 StartDate = offer.StartDate,
                 EndDate = offer.EndDate,
                 Price = offer.Price,

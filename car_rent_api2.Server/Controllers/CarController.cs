@@ -110,6 +110,17 @@ namespace car_rent_api2.Server.Controllers
             return car;
         }
 
+        [HttpPost("createCars")]
+        public async Task<ActionResult<IEnumerable<Car>>> CreateCars([FromBody] List<Car> cars)
+        {
+            foreach (var car in cars)
+            {
+                //_context.Cars.Add(car);
+                await Post(car);
+            }
+            await _context.SaveChangesAsync();
+            return Ok(cars);
+        }
 
         [HttpPost]
         public async Task<ActionResult<Car>> Post([FromBody] Car car)
