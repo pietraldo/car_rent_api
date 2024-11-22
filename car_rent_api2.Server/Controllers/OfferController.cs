@@ -186,5 +186,11 @@ namespace car_rent_api2.Server.Controllers
         {
             return Ok(_offerManager.GetAllOffers());
         }        
+        
+        [HttpGet("rents")]
+        public ActionResult<IEnumerable<Rent>> GetAllRents()
+        {
+            return Ok(_context.Rents);
+        }
     }
 }
