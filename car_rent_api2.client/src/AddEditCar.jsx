@@ -125,7 +125,7 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
         model: '',
         year: 0,
         price: 0,
-        status: "norented",
+        status: 1,
         photo: ''
     });
 
@@ -179,7 +179,7 @@ function Formularz({ onCarAddedOrEdited, editingCar, setEditingCar })
         newCar.model = formData.model;
         newCar.year = formData.year;
         newCar.photo = file_path;
-        newCar.status = "norented";
+        newCar.status = 1;
         newCar.price = formData.price;
         newCar.location = carLocation;
         newCar.details = carDetails;
