@@ -33,7 +33,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             var carsQuery = _context.Cars
-                .Where(c => c.Status == "available")
+                .Where(c => c.Status == CarStatus.Available)
                 .Include(c => c.Details)
                 .Include(c => c.Services).AsQueryable();
 

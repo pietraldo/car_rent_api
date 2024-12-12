@@ -115,7 +115,6 @@ namespace car_rent_api2.Server.Controllers
         {
             foreach (var car in cars)
             {
-                //_context.Cars.Add(car);
                 await Post(car);
             }
             await _context.SaveChangesAsync();
@@ -182,7 +181,7 @@ namespace car_rent_api2.Server.Controllers
                     car.Location = existingLocation; // Link existing Location
                 }
             }
-            car.Status = "available";
+            car.Status = CarStatus.Available;
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(Get), new { id = car.Id }, car);

@@ -20,14 +20,17 @@ namespace car_rent_api2.Server.Controllers
         [HttpGet("status/{status}")]
         public async Task<ActionResult<IEnumerable<Car>>> Get(string status)
         {
-            return await _context.Cars.Where(c=>c.Status==status).ToListAsync();
+            if(!Enum.TryParse<CarStatus>(status, out CarStatus carStatus))
+            {
+                return BadRequest("Invalid status");
+            }
+            return await _context.Cars.Where(c=>c.Status==carStatus).ToListAsync();
         }
 
         [HttpGet("currentstatuses")]
         public async Task<ActionResult<IEnumerable<string>>> Get()
         {
-            return new List<string>() { "rented", "available", "norented", "in_repair"};
-            //return await _context.Cars.Select(c => c.Status).Distinct().ToListAsync();
+            return System.Enum.GetNames(typeof(CarStatus)).ToList();
         }
     }
 }
