@@ -29,7 +29,6 @@ var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING"
 builder.Services.AddDbContext<CarRentDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-var configuration = builder.Configuration;
 
 // Authentication and Authorization
 builder.Services.AddAuthentication(options =>
@@ -54,6 +53,8 @@ builder.Services.AddHttpLogging(o => {});
 
 // Add services
 builder.Services.AddSingleton<IOfferManager, OfferManager>();
+
+
 
 var app = builder.Build();
 
