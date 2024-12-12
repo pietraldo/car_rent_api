@@ -35,7 +35,8 @@ namespace car_rent_api2.Server.Controllers
             var carsQuery = _context.Cars
                 .Where(c => c.Status == CarStatus.Available)
                 .Include(c => c.Details)
-                .Include(c => c.Services).AsQueryable();
+                .Include(c => c.Services)
+                .Include(c=>c.Location).AsQueryable();
 
             // Filter by brand if specified
             if (!string.IsNullOrEmpty(brand))
@@ -171,7 +172,7 @@ namespace car_rent_api2.Server.Controllers
                 StartDate = offer.StartDate,
                 EndDate = offer.EndDate,
                 Price = offer.Price,
-                Status = "reserved",
+                Status = RentStatus.Reserved,
                 Notes = "",
                 LinkToPhotos = ""
             };
