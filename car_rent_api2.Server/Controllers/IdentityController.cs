@@ -47,7 +47,7 @@ public class IdentityController : ControllerBase
         if (signInResult.Succeeded)
         {
             // User successfully signed in
-            return Ok("Login successful!");
+            return Redirect("/");
         }
 
         // User doesn't exist in your system, create a new account
@@ -71,6 +71,6 @@ public class IdentityController : ControllerBase
         // Sign in the user
         await _signInManager.SignInAsync(user, isPersistent: false);
 
-        return Ok("User created and logged in successfully!");
+        return Redirect("/");
     }
 }
