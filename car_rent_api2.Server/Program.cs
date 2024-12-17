@@ -22,10 +22,6 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-Environment.SetEnvironmentVariable("DB_CONNECTION_STRING", "Server=localhost;Database=car_rent;Trusted_Connection=True;TrustServerCertificate=True;");
-Environment.SetEnvironmentVariable("AUTHENTICATION_GOOGLE_ID", "111973067990-qv3orig9e2d2shmib698d02ua0bgq4gl.apps.googleusercontent.com");
-Environment.SetEnvironmentVariable("AUTHENTICATION_GOOGLE_SECRET", "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");
-
 var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? throw new InvalidOperationException("Missing DB_CONNECTION_STRING");
 
 builder.Services.AddDbContext<CarRentDbContext>(options =>
