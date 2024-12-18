@@ -48,5 +48,80 @@ namespace car_rent_api2.Server.Controllers
 
             return Ok(new { success = true });
         }
+
+        public class RentStatusRequest
+        {
+            public int RentId { get; set; }
+        }
+
+        private void sendEmailWithBill()
+        {
+            // Send email logic here
+        }
+
+        [HttpPost("acceptReturn")]
+        public async Task<ActionResult> AcceptReturn([FromBody] RentStatusRequest rentStatusRequest)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            if (rent == null)
+            {
+                return NotFound();
+            }
+
+            if(rent.Status != RentStatus.ReadyToReturn)
+            {
+                return BadRequest("Invalid rent status. Expected ReadyToReturn.");
+            }
+
+            rent.Status = RentStatus.Finished;
+
+            await _context.SaveChangesAsync();
+
+            sendEmailWithBill();
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("readyToReturn")]
+        public async Task<ActionResult> ReadyToReturn([FromBody] RentStatusRequest rentStatusRequest)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            if (rent == null)
+            {
+                return NotFound();
+            }
+
+            if (rent.Status != RentStatus.Active)
+            {
+                return BadRequest("Invalid rent status. Expected Active.");
+            }
+
+            rent.Status = RentStatus.ReadyToReturn;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
+        }
+
+        [HttpPost("pickedUpByClient")]
+        public async Task<ActionResult> PickedUpByClient([FromBody] RentStatusRequest rentStatusRequest)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            if (rent == null)
+            {
+                return NotFound();
+            }
+
+            if (rent.Status != RentStatus.Reserved)
+            {
+                return BadRequest("Invalid rent status. Expected Reserved.");
+            }
+
+            rent.Status = RentStatus.Active;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { success = true });
+        }
     }
 }

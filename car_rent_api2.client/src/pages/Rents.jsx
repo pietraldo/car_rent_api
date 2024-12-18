@@ -7,18 +7,20 @@ function Rents()
     const [active_rent, setActiveRent] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
+    const fetchRents = async () =>
+    {
+        console.log("fetching rents...");
+        const response = await fetch("/api/Rent/getrents");
+        if (response.ok)
+        {
+            const jsonData = await response.json();
+            console.log(jsonData);
+            setRents(jsonData);
+        }
+        setActiveRent(null);
+    };
     useEffect(() =>
     {
-        const fetchRents = async () =>
-        {
-            const response = await fetch("/api/Rent/getrents");
-            if (response.ok)
-            {
-                const jsonData = await response.json();
-                console.log(jsonData);
-                setRents(jsonData);
-            }
-        };
         fetchRents();
     }, []);
 
@@ -34,7 +36,7 @@ function Rents()
                 </div>
 
                 {active_rent && (
-                    <RentDetails rent={active_rent} isEditing={isEditing} setIsEditing={setIsEditing} />
+                    <RentDetails rent={active_rent} isEditing={isEditing} setIsEditing={setIsEditing} refreashRents={fetchRents} />
                 )}
 
             </div>
@@ -42,7 +44,7 @@ function Rents()
     );
 }
 
-function RentDetails({ rent, isEditing, setIsEditing })
+function RentDetails({ rent, isEditing, setIsEditing, refreashRents })
 {
     const handleSaveNote = async () =>
     {
@@ -88,8 +90,7 @@ function RentDetails({ rent, isEditing, setIsEditing })
             alert("Note updated successfully!");
             setIsEditing(false);
 
-            rent.notes = note;
-            rent.linkToPhotos = photo_path;
+            refreashRents();
         }
         else
         {
@@ -97,6 +98,50 @@ function RentDetails({ rent, isEditing, setIsEditing })
         }
         console.log("saving...");
     };
+
+    const returnAndSendBill = async () =>
+    {
+        console.log(JSON.stringify({ rentId: rent.id }));
+        const response = await fetch('/api/Rent/acceptReturn', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rentId: rent.id }),
+        });
+        const result = await response.json();
+        if (result.success)
+        {
+            alert("Returned successfuly!");
+        }
+        else
+        {
+            alert("Failed to start rent.");
+        }
+        refreashRents();
+    }
+
+    const startRent = async () =>
+    {
+        console.log(JSON.stringify({ rentId: rent.id }));
+        const response = await fetch('/api/Rent/pickedUpByClient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ rentId: rent.id }),
+        });
+        const result = await response.json();
+        if (result.success)
+        {
+            alert("Rent started successfully!");
+        }
+        else
+        {
+            alert("Failed to start rent.");
+        }
+        refreashRents();
+    }
 
     return (
 
@@ -114,6 +159,8 @@ function RentDetails({ rent, isEditing, setIsEditing })
 
             <h2>Rent Details</h2>
             <p><strong>Status:</strong> {rent.status}</p>
+            {rent.status == "Reserved" && <button onClick={startRent}>Start rent</button>}
+            {rent.status == "ReadyToReturn" && <button onClick={returnAndSendBill}>Returned and send bill</button>}
             <p><strong>Start Date:</strong> {new Date(rent.startDate).toLocaleDateString()}</p>
             <p><strong>End Date:</strong> {new Date(rent.endDate).toLocaleDateString()}</p>
             <p><strong>Price:</strong> ${rent.price}</p>
