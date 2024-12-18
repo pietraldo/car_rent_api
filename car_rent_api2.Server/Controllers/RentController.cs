@@ -23,7 +23,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpGet("getrents")]
         public async Task<ActionResult<IEnumerable<Rent>>> GetRents()
         {
-            return await _context.Rents.ToListAsync();
+            return await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).ToListAsync();
         }
 
         [HttpPost("uploadnote")]
