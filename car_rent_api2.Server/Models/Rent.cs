@@ -5,6 +5,7 @@
         Reserved,
         Pending,
         Active,
+        ReadyToReturn,
         Finished,
         Canceled
     }

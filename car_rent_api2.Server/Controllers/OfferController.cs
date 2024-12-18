@@ -146,24 +146,11 @@ namespace car_rent_api2.Server.Controllers
             // check if we have user with clientId in database
             if (!await _context.Clients.AnyAsync(c => c.Id == clientId)) 
             {
-                //Create new client
-
-                // send api to request data from user
-
                 return BadRequest("Client not found");
             }
 
 
-            // TODO: check if it is still valid offer (if someone did not reate rent in the meantime)
-
-            // check client id
-            //var client = await _context.Clients.FindAsync(offer.ClientId);
-            //if (client == null)
-            //{
-            //    return BadRequest("Client not found");
-            //}
-            //TODO: client idfind
-
+           
 
             Rent rent = new Rent
             {
