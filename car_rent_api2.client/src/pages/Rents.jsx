@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
+import "../css/Rents.css";
 
 function Rents() {
     const [rents, setRents] = useState([]);
 
     useEffect(() => {
         const fetchRents = async () => {
-            const response = await fetch("/api/Offer/rents");
+            const response = await fetch("/api/Rent/getrents");
             if (response.ok) {
                 const jsonData = await response.json();
+                console.log(jsonData);
                 setRents(jsonData);
             }
         };
@@ -15,42 +17,34 @@ function Rents() {
     }, []);
 
     return (
-        <div className="container">
-            <h1>Rents</h1>
-            <table className="rents-table">
-                <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Brand</th>
-                    <th>Model</th>
-                    <th>Year</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Price</th>
-                    <th>Status</th>                    
-                </tr>
-                </thead>
-                <tbody>
-                {rents.map((rent) => (
-                    <tr key={rent.id}>
-                        <td>{rent.id}</td>
-                        <td>{rent.car.brand}</td>
-                        <td>{rent.car.model}</td>
-                        <td>{rent.car.year}</td>
-                        <td>{rent.user.name}</td>
-                        <td>{rent.user.surname}</td>
-                        <td>{new Date(rent.startDate).toLocaleDateString()}</td>
-                        <td>{new Date(rent.endDate).toLocaleDateString()}</td>
-                        <td>{rent.price}</td>
-                        <td>{rent.status}</td>
-                    </tr>
+        <div className="rents-container">
+            <h1 className="rents-title">Rents</h1>
+            <div className="rents-list">
+                {rents.map(rent => (
+                    <Rent key={rent.id} rent={rent} />
                 ))}
-                </tbody>
-            </table>
+            </div>
         </div>
     );
+}
+
+function Rent({ rent })
+{
+    return (
+        <div className="rent-card">
+            <h2>{rent.car.brand} {rent.car.model}</h2>
+            <p><strong>Client:</strong> {rent.client.name}</p>
+            <p><strong>Status:</strong> {rent.status}</p>
+            <p><strong>Start Date:</strong> {formatDate(rent.startDate)}</p>
+            <p><strong>End Date:</strong> {formatDate(rent.endDate)}</p>
+        </div>
+    );
+}
+
+function formatDate(date_string)
+{
+    const date = new Date(date_string);
+    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
 }
 
 export default Rents;
