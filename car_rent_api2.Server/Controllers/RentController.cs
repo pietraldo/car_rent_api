@@ -25,22 +25,28 @@ namespace car_rent_api2.Server.Controllers
         {
             return await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).ToListAsync();
         }
-
-        [HttpPost("uploadnote")]
-        public async Task<ActionResult> UploadNote(int id, string note, string linkToPhotos)
+        public class EditNoteRequest
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r=>r.Id==id);
+            public int Id { get; set; }
+            public string Note { get; set; }
+            public string LinkToPhotos { get; set; }
+        }
+
+        [HttpPost("editnote")]
+        public async Task<ActionResult> EditNote([FromBody] EditNoteRequest request)
+        {
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == request.Id);
             if (rent == null)
             {
                 return NotFound();
             }
 
-            rent.Notes = note;
-            rent.LinkToPhotos = linkToPhotos;
+            rent.Notes = request.Note;
+            rent.LinkToPhotos = request.LinkToPhotos;
 
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { success = true });
         }
     }
 }

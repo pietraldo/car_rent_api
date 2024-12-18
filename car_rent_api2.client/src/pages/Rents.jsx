@@ -34,7 +34,7 @@ function Rents()
                 </div>
 
                 {active_rent && (
-                        <RentDetails rent={active_rent} isEditing={isEditing} setIsEditing={setIsEditing} />
+                    <RentDetails rent={active_rent} isEditing={isEditing} setIsEditing={setIsEditing} />
                 )}
 
             </div>
@@ -44,45 +44,62 @@ function Rents()
 
 function RentDetails({ rent, isEditing, setIsEditing })
 {
-
-
-
     const handleSaveNote = async () =>
     {
-        //const updatedRent = {
-        //    ...rent,
-        //    notes: note,
-        //    linkToPhotos: photo,
-        //};
+        var note = document.querySelector("#note").value;
+        var photo = document.querySelector("input[type=file]").files[0];
 
-        //try
-        //{
-        //    const response = await fetch(`/api/Rent/editnote`, {
-        //        method: "POST",
-        //        headers: {
-        //            "Content-Type": "application/json",
-        //        },
-        //        body: JSON.stringify(updatedRent),
-        //    });
+        var photo_path;
+        if (photo)
+        {
+            const formDataFile = new FormData();
+            formDataFile.append("file", photo);
+            const response = await fetch("/api/images/upload", {
+                method: "POST",
+                body: formDataFile,
+            });
+            const result = await response.json();
+            photo_path = result.filePath;
+        }
+        else
+        {
+            photo_path = rent.linkToPhotos ? rent.linkToPhotos : "";
+        }
+        console.log(photo_path);
 
-        //    if (response.ok)
-        //    {
-        //        alert("Note updated successfully!");
-        //        setIsEditing(false);
-        //    } else
-        //    {
-        //        alert("Failed to update note.");
-        //    }
-        //} catch (error)
-        //{
-        //    console.error("Error updating note:", error);
-        //    alert("An error occurred while updating the note.");
-        //}
-        console.log("saving");
+        var jsonBody = JSON.stringify({
+            id: rent.id,
+            note: note,
+            linkToPhotos: photo_path,
+        });
+
+        console.log(jsonBody);
+
+        const response = await fetch('/api/Rent/editnote', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonBody,
+        });
+        const result = await response.json();
+        if (result.success)
+        {
+            alert("Note updated successfully!");
+            setIsEditing(false);
+
+            rent.notes = note;
+            rent.linkToPhotos = photo_path;
+        }
+        else
+        {
+            alert("Failed to update note.");
+        }
+        console.log("saving...");
     };
 
     return (
-        
+
         <div className="rents-details">
             <h2>Rent Details</h2>
             <h2>Car Details</h2>
@@ -104,7 +121,7 @@ function RentDetails({ rent, isEditing, setIsEditing })
             <h2>Notes</h2>
             {isEditing ? (
                 <>
-                    <textarea
+                    <textarea id="note"
                         defaultValue={rent.notes}
                         rows="4"
                         cols="50"
@@ -114,7 +131,7 @@ function RentDetails({ rent, isEditing, setIsEditing })
                         type="file"
                         accept="image/*"
                     />
-                    {rent.LinkToPhotos && <img src={rent.LinkToPhotos} alt="Uploaded" style={{ maxWidth: "100%", marginTop: "10px" }} />}
+                    {rent.linkToPhotos && <img src={rent.linkToPhotos} alt="Uploaded" style={{ maxWidth: "100%", marginTop: "10px" }} />}
                     <br />
                     <button onClick={handleSaveNote}>Save Note</button>
                     <button onClick={() => setIsEditing(false)}>Cancel</button>
@@ -122,7 +139,7 @@ function RentDetails({ rent, isEditing, setIsEditing })
             ) : (
                 <>
                     <p>{rent.notes}</p>
-                    {rent.LinkToPhotos && <img src={rent.LinkToPhotos} alt="Rent" style={{ maxWidth: "100%" }} />}
+                        {rent.linkToPhotos && <img src={rent.linkToPhotos} alt="Rent" style={{ maxWidth: "100%" }} />}
                     <button onClick={() => setIsEditing(true)}>Edit Note</button>
                 </>
             )}
