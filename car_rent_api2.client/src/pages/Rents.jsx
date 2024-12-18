@@ -4,8 +4,17 @@ import "../css/Rents.css";
 function Rents()
 {
     const [rents, setRents] = useState([]);
+    const [filtredRents, setFiltredRents] = useState([]);
     const [active_rent, setActiveRent] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+
+    const [uniqueStatuses, setUniqueStatuses] = useState([]);
+
+    const [filterStartDate, setFilterStartDate] = useState(null);
+    const [filterEndDate, setFilterEndDate] = useState(null);
+    const [filterStatus, setFilterStatus] = useState([]);
+    const [filterClient, setFilterClient] = useState("");
+    const [filterCar, setFilterCar] = useState("");
 
     const fetchRents = async () =>
     {
@@ -16,6 +25,10 @@ function Rents()
             const jsonData = await response.json();
             console.log(jsonData);
             setRents(jsonData);
+            const statuses = [...new Set(jsonData.map(rent => rent.status))];
+            setUniqueStatuses(statuses);
+
+            setFilterStatus(statuses);
         }
         setActiveRent(null);
     };
@@ -25,12 +38,105 @@ function Rents()
     }, []);
 
 
+
+    const filterRentsFunction = () =>
+    {
+        var filltred = rents;
+        filltred = filltred.filter(rent => rent.startDate >= filterStartDate || filterStartDate==null);
+        filltred = filltred.filter(rent => rent.endDate <= filterEndDate || filterEndDate == null);
+        filltred = filltred.filter(rent => filterStatus.includes(rent.status));
+
+        filltred = filltred.filter(rent => rent.client.name.includes(filterClient) || rent.client.surname.includes(filterClient) || filterClient=="");
+        filltred = filltred.filter(rent => rent.car.brand.includes(filterCar) || rent.car.model.includes(filterCar));
+
+        console.log(filterClient=="");
+        setFiltredRents(filltred);
+    };
+
+    const handleCheckboxChange = (status, checked) =>
+    {
+        setFilterStatus(prevFilterStatus =>
+        {
+            if (checked)
+            {
+                return [...prevFilterStatus, status];
+            } else
+            {
+                return prevFilterStatus.filter(s => s !== status);
+            }
+        });
+    };
+
+
+    useEffect(() =>
+    {
+        filterRentsFunction();
+    }, [filterStartDate, filterEndDate, filterStatus, filterClient, filterCar]);
+
     return (
         <div className="rents-container">
             <h1 className="rents-title">Rents</h1>
+            <div className="rents-filters">
+                <h2>Filter Rents</h2>
+
+                <div className="filter-group">
+                    <h3>Date Range</h3>
+                    <div className="filter-dates">
+                        <input
+                            type="date"
+                            placeholder="Start Date"
+                            onChange={e => setFilterStartDate(e.target.value)}
+                            className="filter-input"
+                        />
+                        <input
+                            type="date"
+                            placeholder="End Date"
+                            onChange={e => setFilterEndDate(e.target.value)}
+                            className="filter-input"
+                        />
+                    </div>
+                </div>
+
+                <div className="filter-group">
+                    <h3>Statuses</h3>
+                    <div className="filter-checkboxes">
+                        {uniqueStatuses.map((status, index) => (
+                            <label key={index} className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    value={status}
+                                    checked={filterStatus.includes(status)}
+                                    onChange={e => handleCheckboxChange(status, e.target.checked)}
+                                    className="checkbox-input"
+                                />
+                                {status}
+                            </label>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="filter-group">
+                    <h3>Search</h3>
+                    <div className="filter-search">
+                        <input
+                            type="text"
+                            placeholder="Client Name or Surname"
+                            onChange={e => setFilterClient(e.target.value)}
+                            className="filter-input"
+                        />
+                        <input
+                            type="text"
+                            placeholder="Car"
+                            onChange={e => setFilterCar(e.target.value)}
+                            className="filter-input"
+                        />
+                    </div>
+                </div>
+            </div>
+
             <div className={`rents-content ${active_rent ? "details-active" : ""}`}>
                 <div className="rents-list">
-                    {rents.map(rent => (
+                    {filtredRents.map(rent => (
                         <Rent key={rent.id} rent={rent} onClick={() => { setActiveRent(rent); setIsEditing(false); }} />
                     ))}
                 </div>
@@ -186,7 +292,7 @@ function RentDetails({ rent, isEditing, setIsEditing, refreashRents })
             ) : (
                 <>
                     <p>{rent.notes}</p>
-                        {rent.linkToPhotos && <img src={rent.linkToPhotos} alt="Rent" style={{ maxWidth: "100%" }} />}
+                    {rent.linkToPhotos && <img src={rent.linkToPhotos} alt="Rent" style={{ maxWidth: "100%" }} />}
                     <button onClick={() => setIsEditing(true)}>Edit Note</button>
                 </>
             )}
