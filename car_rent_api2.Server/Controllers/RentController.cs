@@ -68,7 +68,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost("acceptReturn")]
         public async Task<ActionResult> AcceptReturn([FromBody] RentStatusRequest rentStatusRequest)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
             if (rent == null)
             {
                 return NotFound();
