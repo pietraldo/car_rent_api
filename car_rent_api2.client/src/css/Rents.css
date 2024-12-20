@@ -23,6 +23,7 @@
     .rents-content .rents-list {
         display: flex;
         justify-content: space-around;
+        flex-wrap:wrap;
         flex: 1;
         transition: all 0.3s ease;
         padding: 20px;
@@ -92,7 +93,8 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     max-width: 600px;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
