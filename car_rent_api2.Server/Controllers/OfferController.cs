@@ -125,7 +125,7 @@ namespace car_rent_api2.Server.Controllers
 
 
         [HttpGet("rentCar/{offerId}/{clientId}")]
-        public async Task<ActionResult<string>> Get(string offerId, string clientId)
+        public async Task<ActionResult<int>> Get(string offerId, string clientId)
         {
             if(!Guid.TryParse(offerId, out Guid guid))
             {
@@ -166,7 +166,7 @@ namespace car_rent_api2.Server.Controllers
             _context.Rents.Add(rent);
             await _context.SaveChangesAsync();
 
-            return Ok("car rent succesfull");
+            return Ok(rent.Id);
         }
         
         [HttpGet("offers")]

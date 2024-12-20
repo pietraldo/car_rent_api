@@ -82,10 +82,10 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("readyToReturn")]
-        public async Task<ActionResult> ReadyToReturn([FromBody] RentStatusRequest rentStatusRequest)
+        [HttpGet("readyToReturn/{rentId}")]
+        public async Task<ActionResult> ReadyToReturn(int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentId);
             if (rent == null)
             {
                 return NotFound();
