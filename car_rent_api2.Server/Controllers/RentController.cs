@@ -82,10 +82,10 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-        [HttpPost("readyToReturn")]
-        public async Task<ActionResult> ReadyToReturn([FromBody] RentStatusRequest rentStatusRequest)
+        [HttpGet("readyToReturn/{rentId}")]
+        public async Task<ActionResult> ReadyToReturn(int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentId);
             if (rent == null)
             {
                 return NotFound();
@@ -122,6 +122,40 @@ namespace car_rent_api2.Server.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true });
+        }
+
+
+
+        public class RentInfoForClient
+        {
+            public DateTime Start { get; set; }
+            public DateTime End { get; set; }
+            public string CarBrand { get; set; }
+            public string CarModel { get; set; }
+            public int CarYear { get; set; }
+            public float Price { get; set; }
+        }
+
+        [HttpGet("getrent/{rentId}")]
+        public async Task<ActionResult<RentInfoForClient>> GetRent(int rentId)
+        {
+            var rent = await _context.Rents.Include(c => c.Car).FirstOrDefaultAsync(r => r.Id == rentId);
+            if (rent == null)
+            {
+                return NotFound();
+            }
+
+            var rentInfo = new RentInfoForClient
+            {
+                Start = rent.StartDate,
+                End = rent.EndDate,
+                CarBrand = rent.Car.Brand,
+                CarModel = rent.Car.Model,
+                CarYear = rent.Car.Year,
+                Price = (float)rent.Price
+            };
+
+            return rentInfo;
         }
     }
 }

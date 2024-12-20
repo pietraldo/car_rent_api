@@ -1,6 +1,7 @@
 ﻿using car_rent_api2.Server.Models;
 using car_rent_api2.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -125,7 +126,7 @@ namespace car_rent_api2.Server.Controllers
 
 
         [HttpGet("rentCar/{offerId}/{clientId}")]
-        public async Task<ActionResult<string>> Get(string offerId, string clientId)
+        public async Task<ActionResult<int>> Get(string offerId, string clientId)
         {
             if(!Guid.TryParse(offerId, out Guid guid))
             {
@@ -166,7 +167,7 @@ namespace car_rent_api2.Server.Controllers
             _context.Rents.Add(rent);
             await _context.SaveChangesAsync();
 
-            return Ok("car rent succesfull");
+            return Ok(rent.Id);
         }
         
         [HttpGet("offers")]
@@ -191,7 +192,9 @@ namespace car_rent_api2.Server.Controllers
             }
             return Ok(new OfferToDisplay(offer));
         }
-        
+
+
+    
 
     }
 }
