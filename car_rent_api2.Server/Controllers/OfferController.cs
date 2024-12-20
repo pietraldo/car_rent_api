@@ -180,5 +180,18 @@ namespace car_rent_api2.Server.Controllers
         {
             return Ok(_context.Rents);
         }
+        
+        [HttpGet("id/{id}")]
+        public ActionResult<Offer> GetOfferById(Guid id)
+        {
+            var offer = _offerManager.GetOffer(id);
+            if (offer == null)
+            {
+                return NotFound();
+            }
+            return Ok(new OfferToDisplay(offer));
+        }
+        
+
     }
 }
