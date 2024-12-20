@@ -1,6 +1,7 @@
 ﻿using car_rent_api2.Server.Models;
 using car_rent_api2.Server.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using System.Collections;
 using System.Collections.Generic;
@@ -191,7 +192,9 @@ namespace car_rent_api2.Server.Controllers
             }
             return Ok(new OfferToDisplay(offer));
         }
-        
+
+
+    
 
     }
 }
