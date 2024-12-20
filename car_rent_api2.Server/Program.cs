@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using car_rent_api2.Server.Services;
 using System.Text.Json.Serialization;
+using car_rent.Server.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +69,7 @@ builder.Services.AddHttpLogging(o => {});
 
 // Add services
 builder.Services.AddSingleton<IOfferManager, OfferManager>();
-
+builder.Services.AddSingleton<IEmailService, MailGunEmailService>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
