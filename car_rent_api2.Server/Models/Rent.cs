@@ -21,5 +21,17 @@
         public RentStatus Status { get; set; }
         public string Notes { get; set; }
         public string LinkToPhotos { get; set; }
+
+        public Rent(Car car, Client client, DateTime startDate, DateTime endDate, double price, RentStatus status, string notes, string linkToPhotos)
+        {
+            Car = car;
+            Client = client;
+            StartDate = startDate;
+            EndDate = endDate;
+            Price = price;
+            Status = status;
+            Notes = notes;
+            LinkToPhotos = linkToPhotos;
+        }
     }
 }
