@@ -28,7 +28,7 @@ function Rents()
             const statuses = [...new Set(jsonData.map(rent => rent.status))];
             setUniqueStatuses(statuses);
 
-            setFilterStatus(statuses);
+            
         }
         setActiveRent(null);
     };
