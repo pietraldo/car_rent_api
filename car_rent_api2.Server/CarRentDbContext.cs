@@ -39,12 +39,11 @@ namespace car_rent_api2.Server
             modelBuilder.Entity<Car>()
             .HasOne(c => c.Location) // Car has one Location
             .WithMany()              // Location has many Cars
-            .HasForeignKey(c => c.LocationId) // Foreign key in Car table
             .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Rent>().HasOne(r=> r.Car).WithMany().HasForeignKey(r => r.CarId).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Rent>().HasOne(r => r.Client).WithMany().HasForeignKey(r => r.ClientId).OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<Rent>().HasOne(r => r.Employee).WithMany().HasForeignKey(r => r.EmployeeId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Car).WithMany().OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Client).WithMany().OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Rent>().HasOne(r => r.Employee).WithMany().OnDelete(DeleteBehavior.Restrict).IsRequired(false);
         }
     }
 }

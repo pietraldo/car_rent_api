@@ -54,7 +54,7 @@ namespace car_rent_api2.Server.Controllers
             
             var cars = await carsQuery
                 .Where(c => !_context.Rents.Any(r =>
-                    r.CarId == c.Id &&
+                    r.Car.Id == c.Id &&
                     (r.StartDate < endDate && r.EndDate > startDate))) 
                 .ToListAsync();
 
@@ -144,8 +144,8 @@ namespace car_rent_api2.Server.Controllers
                 return BadRequest("You must be logged in");
             }
 
-            // check if we have user with clientId in database
-            if (!await _context.Clients.AnyAsync(c => c.Id == clientId)) 
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+            if (client==null) 
             {
                 return BadRequest("Client not found");
             }
@@ -155,8 +155,8 @@ namespace car_rent_api2.Server.Controllers
 
             Rent rent = new Rent
             {
-                CarId = offer.Car.Id,
-                ClientId = clientId,
+                Car = offer.Car,
+                Client = client,
                 StartDate = offer.StartDate,
                 EndDate = offer.EndDate,
                 Price = offer.Price,

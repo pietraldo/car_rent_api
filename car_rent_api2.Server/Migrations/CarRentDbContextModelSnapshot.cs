@@ -286,7 +286,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.ToTable("Cars");
+                    b.ToTable("Cars", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.CarDetail", b =>
@@ -307,7 +307,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CarDetails");
+                    b.ToTable("CarDetails", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.CarService", b =>
@@ -331,7 +331,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CarServices");
+                    b.ToTable("CarServices", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.Location", b =>
@@ -358,7 +358,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Locations");
+                    b.ToTable("Locations", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.Models.Client", b =>
@@ -380,7 +380,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Clients");
+                    b.ToTable("Clients", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.Models.Employee", b =>
@@ -401,7 +401,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("car_rent_api2.Server.Models.Rent", b =>
@@ -450,7 +450,7 @@ namespace car_rent_api2.Server.Migrations
 
                     b.HasIndex("EmployeeId");
 
-                    b.ToTable("Rents");
+                    b.ToTable("Rents", (string)null);
                 });
 
             modelBuilder.Entity("CarCarDetail", b =>
