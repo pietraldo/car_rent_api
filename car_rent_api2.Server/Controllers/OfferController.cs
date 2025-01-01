@@ -33,7 +33,7 @@ namespace car_rent_api2.Server.Controllers
             List<Offer> offers = new List<Offer>();
             foreach (var car in cars)
             {    
-                Offer offer = new Offer(Guid.NewGuid(), car, clientId, car.Price, startDate, endDate);
+                Offer offer = new Offer(car, clientId, car.Price, startDate, endDate);
                 offers.Add(offer);
                 offer.Id = _offerManager.AddOffer(offer);
             }   
@@ -65,7 +65,7 @@ namespace car_rent_api2.Server.Controllers
                 return BadRequest("Client not found");
             }
 
-
+            _context.Entry(offer.Car).State = EntityState.Unchanged;
             Rent rent = new (offer.Car, client, offer.StartDate, offer.EndDate, offer.Price, RentStatus.Reserved, "","");
 
             _context.Rents.Add(rent);

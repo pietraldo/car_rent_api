@@ -9,9 +9,11 @@
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
 
-        public Offer(Guid id, Car car, string clientId, double price, DateTime startDate, DateTime endDate)
+        public Offer()
         {
-            Id = id;
+        }
+        public Offer(Car car, string clientId, double price, DateTime startDate, DateTime endDate)
+        {
             Car = car;
             ClientId = clientId;
             Price = price;

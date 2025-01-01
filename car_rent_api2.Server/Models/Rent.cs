@@ -22,7 +22,8 @@
         public string Notes { get; set; }
         public string LinkToPhotos { get; set; }
 
-        public Rent(Car car, Client client, DateTime startDate, DateTime endDate, 
+        public Rent() { }
+        public Rent(Car car, Client client, DateTime startDate, DateTime endDate,
             double price, RentStatus status, string notes, string linkToPhotos)
         {
             Car = car;
