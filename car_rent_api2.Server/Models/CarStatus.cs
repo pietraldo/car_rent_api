@@ -5,6 +5,7 @@
         Rented,
         Available,
         NoRented,
+        Returned,
         InRepair
     }
 }

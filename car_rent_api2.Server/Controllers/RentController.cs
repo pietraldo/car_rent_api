@@ -73,6 +73,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.Finished;
+            rent.Car.Status= CarStatus.Available;
 
             await _context.SaveChangesAsync();
 
@@ -84,7 +85,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpGet("readyToReturn/{rentId}")]
         public async Task<ActionResult> ReadyToReturn(int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentId);
+            var rent = await _context.Rents.Include(c => c.Car).FirstOrDefaultAsync(r => r.Id == rentId);
             if (rent == null)
             {
                 return NotFound();
@@ -96,6 +97,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.ReadyToReturn;
+            rent.Car.Status = CarStatus.Returned;
 
             await _context.SaveChangesAsync();
 
@@ -105,7 +107,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost("pickedUpByClient")]
         public async Task<ActionResult> PickedUpByClient([FromBody] RentStatusRequest rentStatusRequest)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.Include(c=>c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
             if (rent == null)
             {
                 return NotFound();
@@ -117,6 +119,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.Active;
+            rent.Car.Status = CarStatus.Rented;
 
             await _context.SaveChangesAsync();
 
