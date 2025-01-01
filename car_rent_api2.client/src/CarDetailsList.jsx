@@ -9,7 +9,7 @@ function CarDetails({ carId, carDetails, setCarDetails })
 
     const fetchCarDetails = async () =>
     {
-        const response = await fetch(`api/car/cardetails/${carId}`);
+        const response = await fetch(`api/car/${carId}/cardetails`);
         if (response.ok)
         {
             const jsonData = await response.json();
@@ -63,7 +63,7 @@ function CarDetails({ carId, carDetails, setCarDetails })
                 return;
             }
 
-            const response = await fetch(`api/car/cardetails/search/${searchString}`);
+            const response = await fetch(`api/cardetails/search/${searchString}`);
             if (response.ok)
             {
                 const jsonData = await response.json();

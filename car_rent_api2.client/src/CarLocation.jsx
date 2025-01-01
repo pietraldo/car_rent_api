@@ -9,7 +9,8 @@ function Location({ carId, location, setLocation })
 
     const fetchLocation = async () =>
     {
-        const response = await fetch(`api/car/location/${carId}`);
+        if (carId == -1) return;
+        const response = await fetch(`api/car/${carId}/location`);
         if (response.ok)
         {
             const jsonData = await response.json();
@@ -42,7 +43,7 @@ function Location({ carId, location, setLocation })
                 return;
             }
 
-            const response = await fetch(`api/car/location/search/${searchString}`);
+            const response = await fetch(`api/location/search/${searchString}`);
             if (response.ok)
             {
                 const jsonData = await response.json();
