@@ -111,7 +111,7 @@ namespace car_rent_api2.Server.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] Car car)
+        public async Task<IActionResult> EditCar(int id, [FromBody] Car car)
         {
             if (id != car.Id) return BadRequest();
             
