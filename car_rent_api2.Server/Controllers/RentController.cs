@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using car_rent.Server.Model;
+using car_rent_api2.Server.DTOs;
 
 namespace car_rent_api2.Server.Controllers
 {
@@ -28,12 +29,7 @@ namespace car_rent_api2.Server.Controllers
         {
             return await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).ToListAsync();
         }
-        public class EditNoteRequest
-        {
-            public int Id { get; set; }
-            public string Note { get; set; }
-            public string LinkToPhotos { get; set; }
-        }
+        
 
         [HttpPost("editnote")]
         public async Task<ActionResult> EditNote([FromBody] EditNoteRequest request)
@@ -52,10 +48,7 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-        public class RentStatusRequest
-        {
-            public int RentId { get; set; }
-        }
+       
 
         private void SendEmailWithBill(Rent rent)
         {
@@ -130,18 +123,6 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-
-
-        public class RentInfoForClient
-        {
-            public DateTime Start { get; set; }
-            public DateTime End { get; set; }
-            public string CarBrand { get; set; }
-            public string CarModel { get; set; }
-            public int CarYear { get; set; }
-            public float Price { get; set; }
-        }
-
         [HttpGet("getrent/{rentId}")]
         public async Task<ActionResult<RentInfoForClient>> GetRent(int rentId)
         {
@@ -151,17 +132,7 @@ namespace car_rent_api2.Server.Controllers
                 return NotFound();
             }
 
-            var rentInfo = new RentInfoForClient
-            {
-                Start = rent.StartDate,
-                End = rent.EndDate,
-                CarBrand = rent.Car.Brand,
-                CarModel = rent.Car.Model,
-                CarYear = rent.Car.Year,
-                Price = (float)rent.Price
-            };
-
-            return rentInfo;
+            return new RentInfoForClient(rent);
         }
     }
 }
