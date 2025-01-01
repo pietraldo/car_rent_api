@@ -17,7 +17,7 @@ namespace car_rent_api2.Server.Controllers
             _context = context;
         }
 
-        [HttpGet("status/{status}")]
+        [HttpGet("cars/{status}")]
         public async Task<ActionResult<IEnumerable<Car>>> Get(string status)
         {
             if(!Enum.TryParse<CarStatus>(status, out CarStatus carStatus))
@@ -27,7 +27,7 @@ namespace car_rent_api2.Server.Controllers
             return await _context.Cars.Where(c=>c.Status==carStatus).ToListAsync();
         }
 
-        [HttpGet("currentstatuses")]
+        [HttpGet("allStatuses")]
         public async Task<ActionResult<IEnumerable<string>>> Get()
         {
             return System.Enum.GetNames(typeof(CarStatus)).ToList();
