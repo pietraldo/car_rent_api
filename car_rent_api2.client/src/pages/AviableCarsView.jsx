@@ -11,7 +11,7 @@ function AviableCarsView()
 
     const fetchCarStatuses = async () =>
     {
-        const response = await fetch("api/CarStatus/currentstatuses");
+        const response = await fetch("api/CarStatus/allStatuses");
         if (response.ok)
         {
             const jsonData = await response.json();
@@ -24,7 +24,7 @@ function AviableCarsView()
         const cars = [];
         for (const filter of filterStatus)
         {
-            const response = await fetch(`api/CarStatus/status/${filter}`);
+            const response = await fetch(`api/CarStatus/cars/${filter}`);
             if (response.ok)
             {
                 const jsonData = await response.json();

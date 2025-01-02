@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using car_rent.Server.Model;
+using car_rent_api2.Server.DTOs;
 
 namespace car_rent_api2.Server.Controllers
 {
@@ -28,12 +29,7 @@ namespace car_rent_api2.Server.Controllers
         {
             return await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).ToListAsync();
         }
-        public class EditNoteRequest
-        {
-            public int Id { get; set; }
-            public string Note { get; set; }
-            public string LinkToPhotos { get; set; }
-        }
+        
 
         [HttpPost("editnote")]
         public async Task<ActionResult> EditNote([FromBody] EditNoteRequest request)
@@ -52,10 +48,7 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-        public class RentStatusRequest
-        {
-            public int RentId { get; set; }
-        }
+       
 
         private void SendEmailWithBill(Rent rent)
         {
@@ -80,6 +73,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.Finished;
+            rent.Car.Status= CarStatus.Available;
 
             await _context.SaveChangesAsync();
 
@@ -91,7 +85,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpGet("readyToReturn/{rentId}")]
         public async Task<ActionResult> ReadyToReturn(int rentId)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentId);
+            var rent = await _context.Rents.Include(c => c.Car).FirstOrDefaultAsync(r => r.Id == rentId);
             if (rent == null)
             {
                 return NotFound();
@@ -103,6 +97,7 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.ReadyToReturn;
+            rent.Car.Status = CarStatus.Returned;
 
             await _context.SaveChangesAsync();
 
@@ -112,7 +107,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost("pickedUpByClient")]
         public async Task<ActionResult> PickedUpByClient([FromBody] RentStatusRequest rentStatusRequest)
         {
-            var rent = await _context.Rents.FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.Include(c=>c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
             if (rent == null)
             {
                 return NotFound();
@@ -124,22 +119,11 @@ namespace car_rent_api2.Server.Controllers
             }
 
             rent.Status = RentStatus.Active;
+            rent.Car.Status = CarStatus.Rented;
 
             await _context.SaveChangesAsync();
 
             return Ok(new { success = true });
-        }
-
-
-
-        public class RentInfoForClient
-        {
-            public DateTime Start { get; set; }
-            public DateTime End { get; set; }
-            public string CarBrand { get; set; }
-            public string CarModel { get; set; }
-            public int CarYear { get; set; }
-            public float Price { get; set; }
         }
 
         [HttpGet("getrent/{rentId}")]
@@ -151,17 +135,7 @@ namespace car_rent_api2.Server.Controllers
                 return NotFound();
             }
 
-            var rentInfo = new RentInfoForClient
-            {
-                Start = rent.StartDate,
-                End = rent.EndDate,
-                CarBrand = rent.Car.Brand,
-                CarModel = rent.Car.Model,
-                CarYear = rent.Car.Year,
-                Price = (float)rent.Price
-            };
-
-            return rentInfo;
+            return new RentInfoForClient(rent);
         }
     }
 }

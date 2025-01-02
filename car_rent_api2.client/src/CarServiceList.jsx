@@ -9,7 +9,7 @@ function CarService({ carId, carService, setCarService})
 
     const fetchCarService = async () =>
     {
-        const response = await fetch(`api/car/carservices/${carId}`);
+        const response = await fetch(`api/car/${carId}/carservices`);
         if (response.ok)
         {
             const jsonData = await response.json();
@@ -58,7 +58,7 @@ function CarService({ carId, carService, setCarService})
                 return;
             }
 
-            const response = await fetch(`api/car/carservices/search/${searchString}`);
+            const response = await fetch(`api/carservices/search/${searchString}`);
             if (response.ok)
             {
                 const jsonData = await response.json();

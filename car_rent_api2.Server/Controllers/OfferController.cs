@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using car_rent_api2.Server.DTOs;
 
 namespace car_rent_api2.Server.Controllers
 {
@@ -23,107 +24,21 @@ namespace car_rent_api2.Server.Controllers
             _offerManager = offerManager;
         }
 
-        // GET: api/Offer
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<List<Offer>>>> Get(DateTime startDate, 
+        public async Task<ActionResult<IEnumerable<List<Offer>>>> GetOffers(DateTime startDate, 
             DateTime endDate, string brand="", string model="", string clientId="")
-        {
-            if (startDate >= endDate)
-            {
-                return BadRequest("Invalid date range. Start date must be earlier than end date.");
-            }
-
-            var carsQuery = _context.Cars
-                .Where(c => c.Status == CarStatus.Available)
-                .Include(c => c.Details)
-                .Include(c => c.Services)
-                .Include(c=>c.Location).AsQueryable();
-
-            // Filter by brand if specified
-            if (!string.IsNullOrEmpty(brand))
-            {
-                carsQuery = carsQuery.Where(c => c.Brand == brand);
-            }
-
-            // Filter by model if specified
-            if (!string.IsNullOrEmpty(model))
-            {
-                carsQuery = carsQuery.Where(c => c.Model == model);
-            }
-
-            
-            var cars = await carsQuery
-                .Where(c => !_context.Rents.Any(r =>
-                    r.CarId == c.Id &&
-                    (r.StartDate < endDate && r.EndDate > startDate))) 
-                .ToListAsync();
+        {             
+            var cars = await FilterCars(brand, model, startDate, endDate);
 
             List<Offer> offers = new List<Offer>();
             foreach (var car in cars)
-            {
-                Offer offer = new Offer
-                {
-                    Car = car,
-                    ClientId = clientId,
-                    Price = car.Price,
-                    StartDate = startDate,
-                    EndDate = endDate
-                };
+            {    
+                Offer offer = new Offer(car, clientId, car.Price, startDate, endDate);
                 offers.Add(offer);
-            }   
-            foreach(var offer in offers)
-            {
                 offer.Id = _offerManager.AddOffer(offer);
-            }
-
+            }   
             return Ok(offers);
         }
-
-        [HttpPost("createClient")]
-        public async Task<ActionResult<string>> CreateClient([FromBody] Client client)
-        {
-            if (client == null || string.IsNullOrWhiteSpace(client.Id))
-            {
-                return BadRequest("Invalid client data");
-            }
-
-            if (await _context.Clients.AnyAsync(c => c.Id == client.Id))
-            {
-                return BadRequest("Client already exists");
-            }
-
-            _context.Clients.Add(client);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Error saving client: {ex.Message}");
-            }
-
-            return Ok(client.Id);
-        }
-
-        [HttpGet("checkClient/{id}")]
-        public async Task<ActionResult<string>> CheckClient(string id)
-        {
-            if (id == "")
-            {
-                return BadRequest("Client id must be provided");
-            }
-
-            if (await _context.Clients.AnyAsync(c => c.Id == id))
-            {
-                return Ok("Client found");
-            }
-            else
-            {
-                return NotFound("Client not found");
-            }
-        }
-
-
 
         [HttpGet("rentCar/{offerId}/{clientId}")]
         public async Task<ActionResult<int>> Get(string offerId, string clientId)
@@ -144,26 +59,15 @@ namespace car_rent_api2.Server.Controllers
                 return BadRequest("You must be logged in");
             }
 
-            // check if we have user with clientId in database
-            if (!await _context.Clients.AnyAsync(c => c.Id == clientId)) 
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientId);
+            if (client==null) 
             {
                 return BadRequest("Client not found");
             }
 
+            _context.Entry(offer.Car).State = EntityState.Unchanged;
+            Rent rent = new (offer.Car, client, offer.StartDate, offer.EndDate, offer.Price, RentStatus.Reserved, "","");
 
-           
-
-            Rent rent = new Rent
-            {
-                CarId = offer.Car.Id,
-                ClientId = clientId,
-                StartDate = offer.StartDate,
-                EndDate = offer.EndDate,
-                Price = offer.Price,
-                Status = RentStatus.Reserved,
-                Notes = "",
-                LinkToPhotos = ""
-            };
             _context.Rents.Add(rent);
             await _context.SaveChangesAsync();
 
@@ -193,7 +97,36 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new OfferToDisplay(offer));
         }
 
+        private async Task<List<Car>> FilterCars(string brand, string model, DateTime startDate, DateTime endDate)
+        {
+            if (startDate >= endDate) return new List<Car>();
+            var carsQuery = _context.Cars
+                .Where(c => c.Status == CarStatus.Available)
+                .Include(c => c.Details)
+                .Include(c => c.Services)
+                .Include(c=>c.Location).AsQueryable();
 
+            // Filter by brand if specified
+            if (!string.IsNullOrEmpty(brand))
+            {
+                carsQuery = carsQuery.Where(c => c.Brand == brand);
+            }
+
+            // Filter by model if specified
+            if (!string.IsNullOrEmpty(model))
+            {
+                carsQuery = carsQuery.Where(c => c.Model == model);
+            }
+
+            // Filter by availability
+            var cars = await carsQuery
+                .Where(c => !_context.Rents.Any(r =>
+                    r.Car.Id == c.Id &&
+                    (r.StartDate < endDate && r.EndDate > startDate))) 
+                .ToListAsync();
+
+            return cars;
+        }
     
 
     }

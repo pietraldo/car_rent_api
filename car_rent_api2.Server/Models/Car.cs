@@ -11,11 +11,7 @@ namespace car_rent_api2.Server
         public string Photo { get; set; }
         public CarStatus Status { get; set; }
         public double Price { get; set; }
-
-        public int LocationId { get; set; }
         public Location Location { get; set; }
-
-
         public List<CarDetail> Details { get; set; }
 
         public List<CarService> Services { get; set; }

@@ -8,5 +8,17 @@
         public double Price { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-     }
+
+        public Offer()
+        {
+        }
+        public Offer(Car car, string clientId, double price, DateTime startDate, DateTime endDate)
+        {
+            Car = car;
+            ClientId = clientId;
+            Price = price;
+            StartDate = startDate;
+            EndDate = endDate;
+        }
+    }
 }
