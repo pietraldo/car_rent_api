@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using car_rent_api2.Server;
 
@@ -11,9 +12,11 @@ using car_rent_api2.Server;
 namespace car_rent_api2.Server.Migrations
 {
     [DbContext(typeof(CarRentDbContext))]
-    partial class CarRentDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241220135554_client-email")]
+    partial class clientemail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

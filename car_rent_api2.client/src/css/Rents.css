@@ -1,0 +1,240 @@
+﻿/* Container */
+.rents-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: auto;
+}
+
+.rents-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* Content Layout */
+.rents-content {
+    display: flex;
+    transition: all 0.3s ease;
+}
+
+    .rents-content .rents-list {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap:wrap;
+        flex: 1;
+        transition: all 0.3s ease;
+        padding: 20px;
+        background: #f8f9fa;
+        border-right: 1px solid #ddd;
+        overflow-y: auto;
+    }
+
+    .rents-content.details-active .rents-list {
+        display: block;
+        flex: 0.3;
+    }
+
+
+/* Rent Item */
+.rent-item {
+    max-width: 300px;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .rent-item h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #007bff;
+    }
+
+    .rent-item p {
+        margin: 10px 0;
+        font-size: 1rem;
+        color: #555;
+    }
+
+        .rent-item p strong {
+            color: #333;
+        }
+
+    .rent-item:hover {
+        background: #e9ecef;
+    }
+
+/* Flexbox Adjustments */
+.details-active .rents-list {
+    flex: 0.3;
+}
+
+.details-active .rents-details {
+    display: block;
+}
+
+
+
+
+.rents-content.details-active .rents-details {
+    flex: 0.7;
+}
+
+/* General Container */
+.rents-details {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+    /* Section Headings */
+    .rents-details h2 {
+        font-size: 1.5em;
+        color: #333;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 5px;
+    }
+
+    /* Paragraphs and Strong Text */
+    .rents-details p {
+        margin: 8px 0;
+        line-height: 1.6;
+        color: #555;
+    }
+
+p strong {
+    color: #000;
+}
+
+/* Textarea Styling */
+.rents-details textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+    resize: vertical;
+}
+
+/* File Input Styling */
+.rents-details input[type="file"] {
+    margin-top: 10px;
+    padding: 5px;
+}
+
+/* Buttons */
+.rents-details button {
+    padding: 10px 15px;
+    margin-top: 10px;
+    margin-right: 5px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+    .rents-details button:hover {
+        background-color: #0056b3;
+    }
+
+/* Image Preview */
+.rents-details img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Spacing */
+h2 + p {
+    margin-top: 15px;
+}
+
+.rents-filters {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-group {
+    margin-bottom: 20px;
+}
+
+    .filter-group h3 {
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+.filter-dates, .filter-checkboxes, .filter-search {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.filter-input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    color: #555;
+}
+
+.checkbox-input {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .filter-input {
+        width: 100%;
+    }
+
+    .filter-dates, .filter-checkboxes, .filter-search {
+        flex-direction: column;
+    }
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .rents-content {
+        flex-direction: column;
+    }
+
+        .rents-content .rents-list,
+        .rents-details {
+            flex: 1;
+            width: 100%;
+        }
+}

@@ -54,14 +54,26 @@ export default defineConfig({
             '^/api': {
                 target,
                 secure: false
+            },
+            '^/login': {
+                target,
+                secure: false
+            },
+            '^/register': {
+                target,
+                secure: false
+            },
+            '^/logout': {
+                target,
+                secure: false
             }
         },
         port: 5173,
-        https: isLocal
+        https: /*isLocal
             ? {
                 key: fs.readFileSync(keyFilePath),
                 cert: fs.readFileSync(certFilePath),
             }
-            : false,  // Disable HTTPS in production
+            : */false,  // Disable HTTPS in production
     }
 })

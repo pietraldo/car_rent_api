@@ -5,18 +5,14 @@
 namespace car_rent_api2.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class status : Migration
+    public partial class clientemail : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "IsRented",
-                table: "Cars");
-
             migrationBuilder.AddColumn<string>(
-                name: "Status",
-                table: "Cars",
+                name: "Email",
+                table: "Clients",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -26,15 +22,8 @@ namespace car_rent_api2.Server.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Cars");
-
-            migrationBuilder.AddColumn<bool>(
-                name: "IsRented",
-                table: "Cars",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
+                name: "Email",
+                table: "Clients");
         }
     }
 }
