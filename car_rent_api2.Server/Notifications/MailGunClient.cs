@@ -1,7 +1,7 @@
 using RestSharp;
 using RestSharp.Authenticators;
 
-namespace car_rent.Server.Model;
+namespace car_rent_api2.Server.Notifications;
 
 public class MailGunClient(string apiKey)
 {
