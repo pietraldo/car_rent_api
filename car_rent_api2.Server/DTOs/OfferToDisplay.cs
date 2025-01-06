@@ -10,4 +10,6 @@ public class OfferToDisplay(Offer offer)
     public double Price { get; set; } = offer.Price;
     public DateTime StartDate { get; set; } = offer.StartDate;
     public DateTime EndDate { get; set; } = offer.EndDate;
+    public List<CarDetail> CarDetails { get; set; } = offer.Car.Details;
+    public Location Location { get; set; } = offer.Car.Location;
 }
