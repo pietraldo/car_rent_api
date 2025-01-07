@@ -1,5 +1,6 @@
 ﻿import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "../css/LoginRegister.css";
 
 function RegisterPage() {
     // state variables for email and passwords
@@ -65,7 +66,7 @@ function RegisterPage() {
     };
 
     return (
-        <div className="containerbox">
+        <div className="containerbox loginform">
             <h3>Register</h3>
             <form onSubmit={handleSubmit}>
                 <div>
@@ -106,9 +107,6 @@ function RegisterPage() {
                 </div>
                 <div>
                     <button type="submit">Register</button>
-                </div>
-                <div>
-                    <button type="button" onClick={handleLoginClick}>Go to Login</button>
                 </div>
             </form>
             {error && <p className="error">{error}</p>}

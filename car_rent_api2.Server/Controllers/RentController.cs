@@ -6,8 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using car_rent.Server.Model;
 using car_rent_api2.Server.DTOs;
+using car_rent_api2.Server.Notifications;
 
 namespace car_rent_api2.Server.Controllers
 {
@@ -16,12 +16,12 @@ namespace car_rent_api2.Server.Controllers
     public class RentController : ControllerBase
     {
         private readonly CarRentDbContext _context;
-        private readonly IEmailService _emailService;
+        private readonly INotificationService _notificationService;
 
-        public RentController(CarRentDbContext context, IEmailService emailService)
+        public RentController(CarRentDbContext context, INotificationService notificationService)
         {
             _context = context;
-            _emailService = emailService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("getrents")]
@@ -48,16 +48,6 @@ namespace car_rent_api2.Server.Controllers
             return Ok(new { success = true });
         }
 
-       
-
-        private void SendEmailWithBill(Rent rent)
-        {
-            var messageGenerator = new HtmlMessageGenerator();
-            var message = messageGenerator.CreateCarReturnedMessage(rent);
-
-            _emailService.SendEmail(rent.Client.Email, "[Car Rent] Bill for your rent", message);
-        }
-
         [HttpPost("acceptReturn")]
         public async Task<ActionResult> AcceptReturn([FromBody] RentStatusRequest rentStatusRequest)
         {
@@ -77,7 +67,7 @@ namespace car_rent_api2.Server.Controllers
 
             await _context.SaveChangesAsync();
 
-            SendEmailWithBill(rent);
+            _notificationService.Notify(rent);
 
             return Ok(new { success = true });
         }
