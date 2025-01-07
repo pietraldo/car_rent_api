@@ -90,6 +90,7 @@ namespace car_rent_api2.Server.Controllers
         public ActionResult<Offer> GetOfferById(Guid id)
         {
             var offer = _offerManager.GetOffer(id);
+            
             if (offer == null)
             {
                 return NotFound();
