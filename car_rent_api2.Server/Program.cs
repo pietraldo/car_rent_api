@@ -11,6 +11,7 @@ using Microsoft.Identity.Client;
 using car_rent_api2.Server.Services;
 using System.Text.Json.Serialization;
 using car_rent_api2.Server.Notifications;
+using Microsoft.Extensions.Azure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,10 +25,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? throw new InvalidOperationException("Missing DB_CONNECTION_STRING");
+var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? throw new InvalidOperationException("Missing DB_CONNECTION_STRING");
+var azureStorageConnectionString = Environment.GetEnvironmentVariable("AZURE_STORAGE_CONNECTION_STRING") ?? throw new InvalidOperationException("Missing AZURE_STORAGE_CONNECTION_STRING");
 
 builder.Services.AddDbContext<CarRentDbContext>(options =>
-    options.UseSqlServer(connectionString));
+    options.UseSqlServer(dbConnectionString));
 
 // Authentication and Authorization
 builder.Services.AddAuthentication(options =>
@@ -76,6 +78,10 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
 
+builder.Services.AddAzureClients(async clientBuilder =>
+{
+    clientBuilder.AddBlobServiceClient(azureStorageConnectionString);
+});
 
 var app = builder.Build();
 
