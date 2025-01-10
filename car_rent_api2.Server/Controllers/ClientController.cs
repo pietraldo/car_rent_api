@@ -22,8 +22,6 @@ namespace car_rent_api2.Server.Controllers
             _context = context;
         }
 
-       
-
         [HttpPost("createClient")]
         public async Task<ActionResult<string>> CreateClient([FromBody] Client client)
         {
