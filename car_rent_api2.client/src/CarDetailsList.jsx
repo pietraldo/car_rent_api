@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './css/CarDetails.css';
+import './css/font.css';
 
 function CarDetails({ carId, carDetails, setCarDetails })
 {
