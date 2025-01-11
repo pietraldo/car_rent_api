@@ -11,6 +11,7 @@ jobs:
     runs-on: windows-latest
     env:
       DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+      AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
     steps:
       # Checkout the repository
       - uses: actions/checkout@v4
@@ -33,12 +34,14 @@ jobs:
       - name: Build with dotnet
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: dotnet build --configuration Release
 
       # Publish the .NET Core backend (for deployment)
       - name: dotnet publish
         env:
           DB_CONNECTION_STRING: ${{ secrets.DB_CONNECTION_STRING }}
+          AZURE_STORAGE_CONNECTION_STRING: ${{ secrets.AZURE_STORAGE_CONNECTION_STRING }}
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
       # Upload artifacts for deployment job
