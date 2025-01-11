@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaCar } from "react-icons/fa"; 
 import "./css/Nav.css";
+import './css/font.css';
 
 function Nav()
 {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import './css/CarLocation.css';
+import './css/font.css';
 
 function Location({ carId, location, setLocation })
 {
