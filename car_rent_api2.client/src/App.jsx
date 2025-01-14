@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from "./pages/RegisterPage";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Rents from './pages/Rents';
+import './css/font.css';
 
 function App()
 {

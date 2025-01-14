@@ -3,6 +3,7 @@ import './css/AddEditCar.css';
 import CarDetails from './CarDetailsList';
 import CarService from './CarServiceList';
 import Location from './CarLocation';
+import './css/font.css';
 
 function AddEditCar()
 {

@@ -1,0 +1,11 @@
+﻿@import url("https://rsms.me/inter/inter.css");
+
+:root, input[type="text"], input[type="number"], input[type="file"], button {
+    font-family: Inter, sans-serif;
+    font-feature-settings: 'liga' 1, 'calt' 1; /* fix for Chrome */
+}
+@supports (font-variation-settings: normal) {
+    :root, input[type="text"], input[type="number"], input[type="file"], button {
+        font-family: InterVariable, sans-serif;
+    }
+}

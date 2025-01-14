@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { FaHome, FaCar } from "react-icons/fa"; 
 import "./css/Nav.css";
+import './css/font.css';
 
 function Nav()
 {
@@ -38,14 +39,6 @@ function Nav()
                     <Link to="/registerpage" className={"navbar-link"}>
                         <FaCar className="icon"/> Register
                     </Link>
-                </li>
-                <li>
-                    <form action="/api/Identity/google-login" method="post">
-                        <button type="submit" name="login-with-google" value="login-with-google"
-                                className="navbar-link">Login with
-                            Google
-                        </button>
-                    </form>
                 </li>
             </ul>
         </nav>
