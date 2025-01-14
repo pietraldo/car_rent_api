@@ -25,11 +25,40 @@ namespace car_rent_api2.Server.Controllers
         }
 
         [HttpGet("getrents")]
-        public async Task<ActionResult<IEnumerable<Rent>>> GetRents()
+        public async Task<ActionResult<IEnumerable<Rent>>> GetRents(
+            [FromQuery] int offset = 0,
+            [FromQuery] string startDate = "",
+            [FromQuery] string endDate = "",
+            [FromQuery] string status = "",
+            [FromQuery] string client = "",
+            [FromQuery] string car = ""
+            )
         {
-            return await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).ToListAsync();
+
+            DateTime? startDateParsed = DateTime.TryParse(startDate, out DateTime date) ? date : null;
+            DateTime? endDateParsed = DateTime.TryParse(endDate, out DateTime date2) ? date2 : null;
+
+
+            var statusesParsed = string.IsNullOrEmpty(status)? new List<int>(): status.Split(',').Select(s => (int)Enum.Parse<RentStatus>(s.Trim())).ToList();
+
+            const int limit = 10;
+            var rents = await _context.Rents
+                .Include(c => c.Client)
+                .Include(c => c.Car)
+                .Where(r => startDateParsed == null || r.StartDate >= startDateParsed)
+                .Where(r => endDateParsed == null || r.EndDate <= endDateParsed)
+                .Where(r => !statusesParsed.Any() || statusesParsed.Contains((int)r.Status))
+                .Where(r => client == "" || r.Client.Name.ToLower().Contains(client.ToLower()))
+                .Where(r => car == "" || r.Car.Brand.ToLower().Contains(car.ToLower()) || r.Car.Model.ToLower().Contains(car.ToLower()))
+                .OrderByDescending(r => r.Id)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+
+            return Ok(rents);
         }
-        
+
+
 
         [HttpPost("editnote")]
         public async Task<ActionResult> EditNote([FromBody] EditNoteRequest request)
@@ -51,19 +80,19 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost("acceptReturn")]
         public async Task<ActionResult> AcceptReturn([FromBody] RentStatusRequest rentStatusRequest)
         {
-            var rent = await _context.Rents.Include(c=>c.Client).Include(c=>c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.Include(c => c.Client).Include(c => c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
             if (rent == null)
             {
                 return NotFound();
             }
 
-            if(rent.Status != RentStatus.ReadyToReturn)
+            if (rent.Status != RentStatus.ReadyToReturn)
             {
                 return BadRequest("Invalid rent status. Expected ReadyToReturn.");
             }
 
             rent.Status = RentStatus.Finished;
-            rent.Car.Status= CarStatus.Available;
+            rent.Car.Status = CarStatus.Available;
 
             await _context.SaveChangesAsync();
 
@@ -97,7 +126,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpPost("pickedUpByClient")]
         public async Task<ActionResult> PickedUpByClient([FromBody] RentStatusRequest rentStatusRequest)
         {
-            var rent = await _context.Rents.Include(c=>c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
+            var rent = await _context.Rents.Include(c => c.Car).FirstOrDefaultAsync(r => r.Id == rentStatusRequest.RentId);
             if (rent == null)
             {
                 return NotFound();
