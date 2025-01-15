@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../css/Rents.css";
+import Alert from "../components/Alert";
 
 function Rents()
 {
+
+    const statusesInApi = ["Reserved", "Pending", "ReadyToReturn", "Finished", "Active", "Canceled"];
+
     const [rents, setRents] = useState([]);
     const [filtredRents, setFiltredRents] = useState([]);
     const [active_rent, setActiveRent] = useState(null);
@@ -12,31 +16,62 @@ function Rents()
 
     const [filterStartDate, setFilterStartDate] = useState(null);
     const [filterEndDate, setFilterEndDate] = useState(null);
-    const [filterStatus, setFilterStatus] = useState([]);
+    const [filterStatus, setFilterStatus] = useState(statusesInApi);
     const [filterClient, setFilterClient] = useState("");
     const [filterCar, setFilterCar] = useState("");
+
+    const [offset, setOffset] = useState(0);
+
+
+    const refreashRents = async () =>
+    {
+        if (offset == 0) fetchRents();
+        else setOffset(0);
+    }
 
     const fetchRents = async () =>
     {
         console.log("fetching rents...");
-        const response = await fetch("/api/Rent/getrents");
+        const response = await fetch(`/api/Rent/getrents?offset=${offset}&startDate=${filterStartDate}&endDate=${filterEndDate}&status=${filterStatus}&client=${filterClient}&car=${filterCar}`);
         if (response.ok)
         {
             const jsonData = await response.json();
             console.log(jsonData);
             setRents(jsonData);
-            const statuses = [...new Set(jsonData.map(rent => rent.status))];
-            setUniqueStatuses(statuses);
-
-            
+       
         }
         setActiveRent(null);
     };
+
+    const nextOffset = () =>
+    {
+        setOffset(offset + 10);
+    }
+
+    const previousOffset = () =>
+    {
+        var newOffset = offset - 10;
+        if (newOffset < 0)
+            newOffset = 0;
+        setOffset(newOffset);
+        
+    }
+
     useEffect(() =>
     {
         fetchRents();
+        setUniqueStatuses(statusesInApi);
     }, []);
 
+    useEffect(() =>
+    {
+        fetchRents();
+    }, [offset]);
+
+    useEffect(() =>
+    {
+        filterRentsFunction();
+    }, [rents]);
 
 
     const filterRentsFunction = () =>
@@ -132,8 +167,10 @@ function Rents()
                         />
                     </div>
                 </div>
+                <button onClick={refreashRents}>Refresh</button>
             </div>
-
+            <button onClick={previousOffset}>Previous</button>
+            <button onClick={nextOffset}>Next</button>
             <div className={`rents-content ${active_rent ? "details-active" : ""}`}>
                 <div className="rents-list">
                     {filtredRents.map(rent => (
@@ -146,6 +183,7 @@ function Rents()
                 )}
 
             </div>
+            
         </div>
     );
 }
@@ -193,14 +231,14 @@ function RentDetails({ rent, isEditing, setIsEditing, refreashRents })
         const result = await response.json();
         if (result.success)
         {
-            alert("Note updated successfully!");
+            Alert("green", "Note updated successfully!");
             setIsEditing(false);
 
             refreashRents();
         }
         else
         {
-            alert("Failed to update note.");
+            Alert("red", "Failed to update note.");
         }
         console.log("saving...");
     };
@@ -218,11 +256,11 @@ function RentDetails({ rent, isEditing, setIsEditing, refreashRents })
         const result = await response.json();
         if (result.success)
         {
-            alert("Returned successfuly!");
+            Alert("green", "Returned successfuly!");
         }
         else
         {
-            alert("Failed to start rent.");
+            Alert("red", "Failed to return.");
         }
         refreashRents();
     }
@@ -240,11 +278,11 @@ function RentDetails({ rent, isEditing, setIsEditing, refreashRents })
         const result = await response.json();
         if (result.success)
         {
-            alert("Rent started successfully!");
+            Alert("green", "Rent started successfully!");
         }
         else
         {
-            alert("Failed to start rent.");
+            Alert("red", "Failed to start rent.");
         }
         refreashRents();
     }
