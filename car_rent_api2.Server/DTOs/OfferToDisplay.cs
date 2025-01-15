@@ -11,5 +11,6 @@ public class OfferToDisplay(Offer offer)
     public DateTime StartDate { get; set; } = offer.StartDate;
     public DateTime EndDate { get; set; } = offer.EndDate;
     public List<CarDetail> CarDetails { get; set; } = offer.Car.Details;
+    public List<CarService> CarServices { get; set; } = offer.Car.Services;
     public Location Location { get; set; } = offer.Car.Location;
 }
