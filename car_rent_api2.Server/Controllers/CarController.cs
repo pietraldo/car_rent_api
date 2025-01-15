@@ -20,7 +20,7 @@ namespace car_rent_api2.Server.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> Cars()
         {
-            return await _context.Cars.ToListAsync();
+            return await _context.Cars.Include(c=>c.Location).ToListAsync();
         }
 
         [HttpGet("{id}")]
